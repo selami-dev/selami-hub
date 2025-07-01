@@ -54,7 +54,7 @@ end
 
 local notif1 = HaikyuuRaper:Notify("🏐 Volleyball Legends", "🔁 Loading...", nil, true)
 
-require(ReplicatedStorage.Packages.Knit).OnStart():await()
+require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit")).OnStart():await()
 
 if not LocalPlayer:GetAttribute("DataLoaded") then
 	LocalPlayer:GetAttributeChangedSignal("DataLoaded"):Wait()
@@ -78,7 +78,7 @@ until CourtPart
 
 local gameController
 
-gameController = require(ReplicatedFirst.Controllers.GameController)
+gameController = require(ReplicatedFirst:WaitForChild("Controllers"):WaitForChild("GameController"))
 
 local GameModule
 
@@ -107,8 +107,9 @@ if hookfunction and newcclosure then
 	BallTrajectory = {}
 
 	local BallModule
-	BallModule = require(ReplicatedFirst.Controllers.BallController.Ball)
-	GameModule = require(ReplicatedStorage.Configuration.Game)
+	BallModule =
+		require(ReplicatedFirst:WaitForChild("Controllers"):WaitForChild("BallController"):WaitForChild("Ball"))
+	GameModule = require(ReplicatedStorage:WaitForChild("Configuration"):WaitForChild("Game"))
 
 	local newBallSignal, ballDestroySignal, trajectoryUpdatedSignal = Signal.new(), Signal.new(), Signal.new()
 
@@ -199,13 +200,13 @@ if hookfunction and newcclosure then
 	end)
 end
 
-local StylePath = ReplicatedStorage.Content.Style
-local AbilityPath = ReplicatedStorage.Content.Ability
+local StylePath = ReplicatedStorage:WaitForChild("Content"):WaitForChild("Style")
+local AbilityPath = ReplicatedStorage:WaitForChild("Content"):WaitForChild("Ability")
 
 local StyleModule = require(StylePath)
-local StyleController = require(ReplicatedFirst.Controllers.StyleController)
+local StyleController = require(ReplicatedFirst:WaitForChild("Controllers"):WaitForChild("StyleController"))
 
-local AbilityController = require(ReplicatedFirst.Controllers.AbilityController)
+local AbilityController = require(ReplicatedFirst:WaitForChild("Controllers"):WaitForChild("AbilityController"))
 local AbilityModule = require(AbilityPath)
 
 local function styleFromId(id)
@@ -922,7 +923,7 @@ do
 			SELECTED_BALL = ball
 		end, CustomBallNode)
 
-		local networkModule = require(game:GetService("ReplicatedStorage").network)
+		local networkModule = require(ReplicatedStorage:WaitForChild("network"))
 		local callbackTable = debug.getupvalue(networkModule.BallStream.SetCallback, 1)
 
 		if callbackTable[1] then
@@ -1410,8 +1411,9 @@ do
 		local specialController
 		local moveController
 
-		specialController = require(ReplicatedFirst.Controllers.SpecialController)
-		moveController = require(ReplicatedFirst.Controllers.SpecialController.Move)
+		specialController = require(ReplicatedFirst:WaitForChild("Controllers"):WaitForChild("SpecialController"))
+		moveController =
+			require(ReplicatedFirst:WaitForChild("Controllers"):WaitForChild("SpecialController"):WaitForChild("Move"))
 
 		if specialController and gameController and moveController then
 			--->> CONFIG
@@ -2027,9 +2029,8 @@ do
 	--
 
 	-- Auto Receive (Dive, Set)
-	local specialController = require(ReplicatedFirst.Controllers.SpecialController)
-	local effectRemoteThings = game:GetService("ReplicatedStorage")
-		:WaitForChild("Packages")
+	local specialController = require(ReplicatedFirst:WaitForChild("Controllers"):WaitForChild("SpecialController"))
+	local effectRemoteThings = ReplicatedStorage:WaitForChild("Packages")
 		:WaitForChild("_Index")
 		:WaitForChild("sleitnick_knit@1.7.0")
 		:WaitForChild("knit")
@@ -3006,7 +3007,9 @@ do
 	local jan = Janitor.new()
 	local inroundJan = Janitor.new()
 
-	jan:Add(inroundJan)
+	jan:Add(function()
+		inroundJan:Cleanup()
+	end)
 
 	local joinRemote = ReplicatedStorage:WaitForChild("Packages")
 		:WaitForChild("_Index")
@@ -3066,94 +3069,125 @@ do
 					)
 
 					-->> autoplay
-					inroundJan:Add(RunService.Heartbeat:Connect(function()
-						if not BallTrajectory.LastTrajectory then
-							return
-						end
-
-						local character = LocalPlayer.Character
-						if
-							not character
-							or not character:FindFirstChild("Humanoid")
-							or not character:FindFirstChild("HumanoidRootPart")
-						then
-							return
-						end
-
-						local humanoid = character:FindFirstChild("Humanoid")
-						humanoid.AutoRotate = false
-
-						local rootPart = character:FindFirstChild("HumanoidRootPart")
-						rootPart.CFrame = CFrame.new(rootPart.Position)
-							* CFrame.lookAt(
-								rootPart.Position * Vector3.new(1, 0, 1),
-								CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
-							).Rotation
-
-						local ball = BallTrajectory.LastBall
-						if not ball then
-							return
-						end
-
-						-- Check if ball is close to player for setting
-						local ballPart = ball.Ball
-
-						local landingPosition = BallTrajectory.LastTrajectory
-						local timeToLand = BallTrajectory.LastTime
-
-						-- Check if ball or landing position is close enough to set
-						local ballPosition = ballPart:GetPivot().Position
-						local playerPosition = rootPart.Position
-
-						local dir = (BallTrajectory.LastTrajectory - rootPart.Position).Unit
-						local function ssss()
-							if ReplicatedStorage:GetAttribute("Gamemode") ~= "Training" then
-								if
-									not ReplicatedStorage:GetAttribute("IsBallInPlay")
-									or not ReplicatedStorage:GetAttribute("LastHitType")
-									or not ReplicatedStorage:GetAttribute("TeamHitStreak")
-								then
-									return
-								end
-
-								local courtPosition = CourtPart.Position
-								local courtSize = CourtPart.Size * Vector3.new(1.05, 1, 1.05)
-
-								-- Determine which side of the court the player is on (using Z axis)
-								local isPlayerOnPositiveZSide = playerPosition.Z > courtPosition.Z
-
-								-- Check if landing position is on the same side as the player
-								local isLandingOnPlayersSide = (
-									isPlayerOnPositiveZSide and landingPosition.Z > courtPosition.Z
-								)
-									or (not isPlayerOnPositiveZSide and landingPosition.Z < courtPosition.Z)
-
-								if not isLandingOnPlayersSide then
-									return
-								end
+					inroundJan:Add(task.defer(function()
+						while RunService.Heartbeat:Wait() do
+							if LocalPlayer:GetAttribute("IsServing") then
+								local args = {
+									Vector3.new(0, 0, 0),
+									0.5,
+								}
+								game:GetService("ReplicatedStorage")
+									:WaitForChild("Packages")
+									:WaitForChild("_Index")
+									:WaitForChild("sleitnick_knit@1.7.0")
+									:WaitForChild("knit")
+									:WaitForChild("Services")
+									:WaitForChild("GameService")
+									:WaitForChild("RF")
+									:WaitForChild("Serve")
+									:InvokeServer(unpack(args))
+								continue
 							end
 
-							humanoid.WalkToPoint = BallTrajectory.LastTrajectory * Vector3.new(1, 0, 1)
+							if not BallTrajectory.LastTrajectory then
+								continue
+							end
+
+							local character = LocalPlayer.Character
+							if
+								not character
+								or not character:FindFirstChild("Humanoid")
+								or not character:FindFirstChild("HumanoidRootPart")
+							then
+								continue
+							end
+
+							local humanoid = character:FindFirstChild("Humanoid")
+							humanoid.AutoRotate = false
+
+							local rootPart = character:FindFirstChild("HumanoidRootPart")
+							rootPart.CFrame = CFrame.new(rootPart.Position)
+								* CFrame.lookAt(
+									rootPart.Position * Vector3.new(1, 0, 1),
+									CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
+								).Rotation
+
+							local playerPosition = rootPart.Position
+
+							local courtPosition = CourtPart.Position
+							local courtSize = CourtPart.Size
+
+							-- Determine which side of the court the player is on (using Z axis)
+							local isPlayerOnPositiveZSide = playerPosition.Z > courtPosition.Z
+
+							-- Calculate center position of player's side of court
+							local centerX = courtPosition.X
+							local centerZ = courtPosition.Z
+								+ (isPlayerOnPositiveZSide and courtSize.Z / 4 or -courtSize.Z / 4)
+							local centerY = rootPart.Position.Y
+
+							local centerPosition = Vector3.new(centerX, centerY, centerZ)
+							humanoid.WalkToPoint = centerPosition * Vector3.new(1, 0, 1)
 								+ rootPart.Position * Vector3.new(0, 1, 0)
-						end
-						ssss()
 
-						local ballToPlayerDist = (ballPosition - playerPosition).Magnitude
-						local landingToPlayerDist = (landingPosition - playerPosition).Magnitude
-						local setRange = 7 * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS["Bump"] or 1)
+							local ball = BallTrajectory.LastBall
+							if not ball then
+								continue
+							end
 
-						if
-							(ballToPlayerDist <= setRange)
-							or (
-								timeToLand < 0.25 + 0.5 * LocalPlayer:GetNetworkPing()
-								and landingToPlayerDist <= setRange
-							)
-						then
-							-- Ball or landing position is close enough to set
-							setthreadidentity(2)
-							gameController:DoMove("Bump")
-							setthreadidentity(8)
-							return
+							-- Check if ball is close to player for setting
+							local ballPart = ball.Ball
+
+							local landingPosition = BallTrajectory.LastTrajectory
+							local timeToLand = BallTrajectory.LastTime
+
+							-- Check if ball or landing position is close enough to set
+							local ballPosition = ballPart:GetPivot().Position
+
+							local dir = (BallTrajectory.LastTrajectory - rootPart.Position).Unit
+							local function ssss()
+								if ReplicatedStorage:GetAttribute("Gamemode") ~= "Training" then
+									if
+										not ReplicatedStorage:GetAttribute("IsBallInPlay")
+										or not ReplicatedStorage:GetAttribute("LastHitType")
+										or not ReplicatedStorage:GetAttribute("TeamHitStreak")
+									then
+										return
+									end
+
+									-- Check if landing position is on the same side as the player
+									local isLandingOnPlayersSide = (
+										isPlayerOnPositiveZSide and landingPosition.Z > courtPosition.Z
+									)
+										or (not isPlayerOnPositiveZSide and landingPosition.Z < courtPosition.Z)
+
+									if not isLandingOnPlayersSide then
+										return
+									end
+								end
+
+								humanoid.WalkToPoint = BallTrajectory.LastTrajectory * Vector3.new(1, 0, 1)
+									+ rootPart.Position * Vector3.new(0, 1, 0)
+							end
+							ssss()
+
+							local ballToPlayerDist = (ballPosition - playerPosition).Magnitude
+							local landingToPlayerDist = (landingPosition - playerPosition).Magnitude
+							local setRange = 7 * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS["Bump"] or 1)
+
+							if
+								(ballToPlayerDist <= setRange)
+								or (
+									timeToLand < 0.25 + 0.5 * LocalPlayer:GetNetworkPing()
+									and landingToPlayerDist <= setRange
+								)
+							then
+								-- Ball or landing position is close enough to set
+								setthreadidentity(2)
+								gameController:DoMove("Bump")
+								setthreadidentity(8)
+								continue
+							end
 						end
 					end))
 
@@ -3164,11 +3198,6 @@ do
 					end
 
 					inroundJan:Cleanup()
-				end
-			end))
-
-			jan:Ad(LocalPlayer:GetAttributeChangedSignal("IsServing"):Connect(function()
-				if LocalPlayer:GetAttribute("IsServing") then
 				end
 			end))
 		else

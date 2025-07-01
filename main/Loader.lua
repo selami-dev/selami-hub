@@ -7,7 +7,7 @@
         ForceUniversal = false,
     }
     
-    local SelamiHub = loadstring(game:HttpGet('https://raw.githubusercontent.com/selami-dev/selami-hub/refs/heads/main/main/Loader.lua"))()(Args)
+    local SelamiHub = loadstring(game:HttpGet("https://raw.githubusercontent.com/selami-dev/selami-hub/refs/heads/main/main/Loader.lua"))()(Args)
 ]]
 
 local function start(LAUNCH_ARGS)
