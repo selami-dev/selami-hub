@@ -1,24 +1,3 @@
-# Ignore everything
-*
-
-# Don't ignore .gitignore, build folder, GitHub workflow, and README
-!.gitignore
-!build/
-!build/**/*
-!.github/
-!.github/**/*
-!README.md
-
-# But still ignore these in case they're in the build folder
-*.so
-*.dll
-*.dylib
-*.o
-*.a
-*.la
-*.lo
-*.luac
-
 # Windows specific
 Thumbs.db
 ehthumbs.db
@@ -41,4 +20,14 @@ $RECYCLE.BIN/
 .idea/
 *.swp
 *.swo
-*~ 
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Build artifacts
+*.obfuscated.lua
+
+# Prometheus obfuscator
+Prometheus/
