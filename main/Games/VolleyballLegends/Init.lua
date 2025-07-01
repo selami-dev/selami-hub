@@ -3148,8 +3148,7 @@ do
 							local function ssss()
 								if ReplicatedStorage:GetAttribute("Gamemode") ~= "Training" then
 									if
-										not ReplicatedStorage:GetAttribute("IsBallInPlay")
-										or not ReplicatedStorage:GetAttribute("LastHitType")
+										not ReplicatedStorage:GetAttribute("LastHitType")
 										or not ReplicatedStorage:GetAttribute("TeamHitStreak")
 									then
 										return
