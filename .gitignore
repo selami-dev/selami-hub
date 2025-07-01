@@ -1,0 +1,44 @@
+# Ignore everything
+*
+
+# Don't ignore .gitignore, build folder, GitHub workflow, and README
+!.gitignore
+!build/
+!build/**/*
+!.github/
+!.github/**/*
+!README.md
+
+# But still ignore these in case they're in the build folder
+*.so
+*.dll
+*.dylib
+*.o
+*.a
+*.la
+*.lo
+*.luac
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# VS Code specific
+.vscode/
+.history/
+
+# IDE and editor files
+.idea/
+*.swp
+*.swo
+*~ 
