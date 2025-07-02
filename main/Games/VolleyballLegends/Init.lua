@@ -1872,10 +1872,10 @@ do
 			gameController.DoMove,
 			newcclosure(function(_, name, ...)
 				if NO_DEBOUNCE_ENABLED then
-					local args = { ... }
+					local args = table.pack(...)
 					args[2] = false
 					args[6] = 0
-					return oldMove(_, name, table.unpack(args))
+					return oldMove(_, name, table.unpack(args, 1, args.n))
 				end
 				return oldMove(_, name, ...)
 			end)
