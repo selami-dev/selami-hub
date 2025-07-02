@@ -1,1 +1,227 @@
-return(function(...)local r=function(F)local G=""for y=1,#F/2,1 do G=G..F[#F/2+F[y]]end return G end local k,W do local F=math.floor local G=math.random local y=table.remove local E=string.char local h=0 local S=2 local q={}local M={}local A=0 local f={}for F=1,256,1 do f[F]=F end repeat local F=G(1,#f)local h=y(f,F)M[h]=E(h-1)until#f==0 local U={}local function s()if#U==0 then h=(h*93+26218354237281)%35184372088832 repeat S=(S*220)%257 until S~=1 local G=S%32 local y=(F(h/2^(13-(S-G)/32))%4294967296)/2^G local E=F((y%1)*4294967296)+F(y)local q=E%65536 local M=(E-q)/65536 local A=q%256 local f=(q-A)/256 local s=M%256 local T=(M-s)/256 U={A;f,s;T}end return table.remove(U)end local T={}k=setmetatable({},{__index=T;__metatable=nil})function W(F,G)local y=T if y[G]then else U={}local E=M h=G%35184372088832 S=G%255+2 local q=string.len(F)y[G]=""local A=41 for h=1,q,1 do A=((string.byte(F,h)+s())+A)%256 y[G]=y[G]..E[A+1]end end return G end end local F=(getgenv())[k[W("\252\026\112\132\098\170\022\070\182\249",22215322554577)]]if not F then return false,k[W("\v\185\249\131\077\025\152\088\165\037\072\229\048\024\016\094\n\132\092\219\097\245\151\024\119",5036002841170)]end if not F[k[W("\091\243\137",3837670395382)]]or type(F[k[W("\052\243\056",14298382480388)]])~=k[W("\125\167\024\066\113\051",11714880809630)]or F[k[W("\101\037\182",13591838798194)]]~=k[W("\240\234\250\091\230\029\148\243\196\091\179\119\040\203\014\021\'",12712417406527)]then return false,k[W("\t\147\221\"\223\014\096\221\179\028\026",22109018869870)]end local G=(F[k[W("\146\003\209\211\247\154\a\242\235\137\114\056",33757325654734)]]:LoadFromPath(k[W("\131\226\230\148\249\109\161\128",33222585907420)]))[k[W("\r\249\161",15211090884438)]](k[W("\225\206\221\076\000\138\022\225\127",386558853480)])local y=G[k[W("\133\060\212\078\150\247\025",18795350475872)]]local E=G[k[W("\128\141\169\181\220\106",18381947257567)]]local h=G[k[W("\161\212\179\092\229\030\084\088\n\050\059\112\148",13297624559712)]]local S=G[k[W("\062\112\228\241\132\093",13009852968788)]]:CreateTab({[k[W("\255\105\191\163",5708185736388)]]=k[W("\174\149\231\134\143\052\173\t\205\248\244\231\198\103",22950858150782)],[k[W("\128\222\180\092\210\046\170",19895969433697)]]=true})local q=G[k[W("\214\133\076\059\116",7679635889136)]]local function M(F)return typeof(F)==k[W("\210\210\222\219\217\133\107\049",33615587408458)]and(F[k[W("\060\027\006\245\018\249\026\071\222",18991851226391)]]==k[W("\083\031\166\003\191\069\190\140",8887632306261)]and F[k[W("\070\026\159\121\224\069",23125883409441)]]==k[W("\r\029\248\127\231\146\189\088\050\173\237\091\215\228\026\099\175\037\220\245\149\049\131",17278106975963)])end local A={}local f=true local function U()for F,G in pairs(workspace:GetDescendants())do if M(G)then if A[G]then continue end local F=Instance[k[W("\103\184\086",11066320955458)]](k[W("\066\175\021\015\031\"\134\251\120\149\112\079",33944162433916)])F[k[W("\172\t\090\227",30494124666607)]]=k[W("\046\202\141\088\162\063\198",16191447087847)]F[k[W("\147\041\226\017",25010357820156)]]=UDim2[k[W("\054\158\139",20329774369269)]](0,100,0,50)F[k[W("\138\044\201\117\116\059\234\048\164\112\067",16991409159632)]]=Vector3[k[W("\064\190\144",23260105233566)]](0,3,0)F[k[W("\168\014\211\176\222\018\191\168\092\128\237",25020021791493)]]=true F[k[W("\202\099\110\163\062\140\161",18020085219726)]]=G F[k[W("\054\r\047\234\049\109",22584701014569)]]=G local y=Instance[k[W("\159\066\198",35016863252323)]](k[W("\017\073\222\152\069\048\218\065\062",6466270599046)])y[k[W("\148\244\196\106",33221512132827)]]=k[W("\148\079\192\"\111\175\075\075",34105228622866)]y[k[W("\a\022\255\235",21850239192957)]]=UDim2[k[W("\003\207\241",1639653803511)]](1,0,1,0)y[k[W("\059\162\070\018\148\027\169\142\019\062\060\018\209\066\072\182\066\006\205\234\014\071",15536444586117)]]=1 y[k[W("\056\134\044\055",10542318954074)]]=k[W("\175\049\205\142",32453763298832)]y[k[W("\111\020\149~\029\062\028\038\181\171",34704394845760)]]=Color3[k[W("\033\233\128",32682477287141)]](1,1,1)y[k[W("\134\146\201\253\109\139\197\177\158\094\055\240\184\175\110\085\026\222\204\170\173\243",14236103553994)]]=0 y[k[W("\107\116\146\194\018\164\036\004\070\042\109\140\080\006\192\001",15750125730124)]]=Color3[k[W("\035\199\205",9378347295262)]](0,0,0)y[k[W("\059\216\155\138\119\206\069\199",13693847384529)]]=18 y[k[W("\000\178\113\023",18054446006702)]]=Enum[k[W("\062~\016\047",16739072130277)]][k[W("\123\137\190\183\133\102\236\246\219\171",23031391245257)]]y[k[W("\198\216\223\129\155\040",7342470666934)]]=F F[k[W("\047\074\024\146\202\131\127",31768695108498)]]=f G[k[W("\r\214\223\084\093\167\038\090\085\091\063\031\065\202\250",12854155652803)]]:Connect(function()if not G:IsDescendantOf(game)then F:Destroy()A[G]=nil end end)A[G]=F end end end local s=S:TreeNode({[k[W("\216\025\226\000\076",35138199781333)]]=k[W("\063\180\069\044\252\254\174\186",20039855229159)],[k[W("\220\096\128\154\058\002\142\172\133",12174456335434)]]=false})h:AddElement(k[W("\070\205\025\093\134\232\088\098\000\079\204\243\178~",12088554367994)],s:Checkbox({[k[W("\139\005\181\227\117",17133147405908)]]=k[W("\027\079\243\020\030\'\t",28095312225845)],[k[W("\209\177\083\084\090",24246904084533)]]=true,[k[W("\218\142\138\248\243\083\135\176",31332742623740)]]=function(F,G)f=G for F,y in pairs(A)do y[k[W("\084\244\099\150\118\090\231",4196311109444)]]=G end end}))s:Button({[k[W("\131\110\195\171",2680141384128)]]=k[W("\170\003\002\132\059\245\053\134\207-\048",12303309286594)],[k[W("\229\204\161\095\211\070\239\150",13209575043086)]]=function()U()end})local T=false local a h:AddElement(k[W("\199\255\213\194\006\077\102\139~\204\154\n\091\159\146\070\021\079",14886810957352)],s:Checkbox({[k[W("\025\193\237\089\205",14582932747533)]]=k[W("\210\230\092\212\216\107\166\243\114\081\037\176\058\107\204\115\095",328575025458)];[k[W("\200\179\217\089\107",3564931648760)]]=false;[k[W("\073\119\104\181\237\167\240\220",33245135173873)]]=function(F,G)T=G if G then a=task[k[W("\247\075\074\177\087",10815057700696)]](function()while T do task[k[W("\128\191\161\245",10067710583968)]](5)U()end end)else if a then task[k[W("\129\174\155\085\173\221",14570047452417)]](a)a=nil end end end}))q:Add(function()if a then task[k[W("\097\109\093-\r\115",19277475268129)]](a)a=nil end end)q:Add(function()for F,G in pairs(A)do G:Destroy()end table[k[W("\072\056\020\090\107",33857186691883)]](A)end)local p=true local L={}local function v(F,G)if not L[F]then local y=Instance[k[W("\154\054\187",23432982943039)]](k[W("\114\070\183\028",1127463322650)])y[k[W("\146 \067\017",1699785180719)]]=k[W("\207\121\110\022\211\128\192\195\158\088\219\125",18192962929199)]y[k[W("\085\052\110\021\r\159\118\183",16737998355684)]]=true y[k[W("\090\001\113\225",8893001179226)]]=Vector3[k[W("\204\017\031",7745136139309)]](1,1,1)y[k[W("\124\070\024\092\059\186\140\235\080\119\005\049",5294782518083)]]=1 y[k[W("\134\138\068\172\003\174\108\062\047\018",6257958328004)]]=false y[k[W("\198-\130\132\020\210",6779812780202)]]=CFrame[k[W("\151\194\182",24645274458536)]](G)y[k[W("\201\117\084\165\083\149",17260926582475)]]=workspace local E=Instance[k[W("\136\188\152",27074152587902)]](k[W("\038\219\138\088\063\226\132\236\056\125\214\225",25222965189570)])E[k[W("\006\195\206\090",29086406175184)]]=k[W("\149\202\r\063\234\155\091\047\244\096\145\239",8051161898314)]E[k[W("\234\130\144\193",19890600560732)]]=UDim2[k[W("\172\144\070",7512127052628)]](0,100,0,50)E[k[W("\146\185\181\187 \132\159\080\182\"\142",32943404513240)]]=Vector3[k[W("\086\094\155",12150833294388)]](0,3,0)E[k[W("\100\021\049\221\183\215\170\217\102\094\163",5176667312853)]]=true E[k[W("\232\192\171\061\233\017\218",30656264630150)]]=y E[k[W("\249\073\186\143\091\140",5669529851040)]]=y local h=Instance[k[W("\095\124\070",29959384919293)]](k[W("\179\139\087\185\244\196\015\192\093",26757389082967)])h[k[W("\232\247\158\106",21619377655462)]]=k[W("\150\120\081\148\191\044\070\153\106\231\042\012\121",8678246260626)]h[k[W("\135\137\208\037",16070110558838)]]=UDim2[k[W("\194\143\209",33059372169284)]](1,0,1,0)h[k[W("\041\186\"\086\143\127\"\244\200\063\168\066\196\140\136\137\180\211\028\148\016\014",12396727676185)]]=1 h[k[W("\207\162\101\197",15060762441418)]]=k[W("\073\170\123\047\145\123\047\191\n",2294656305241)]h[k[W("\074\130\080\221\023\079\145\149\191\101",22604028957243)]]=Color3[k[W("\149\002\186",24624872741269)]](.082352,1,0)h[k[W("\130\023\063\a\089\"\059\118\065\018\b\088\100\129\056\043\121\079\132\209\085\167",31466964447865)]]=0 h[k[W("\201\215\079\223\249\232\050\141\072\003\254\089\191\'\072\049",17904117563682)]]=Color3[k[W("\015\205\183",23803435177624)]](0,0,0)h[k[W("\116\231\056\103\134\112\094\165",29018758375825)]]=18 h[k[W("\001\144\113\179",30661633503115)]]=Enum[k[W("\090 \121\246",14879294535201)]][k[W("\249\148\195\042\079\204\033\173\184\232",24531454351678)]]h[k[W("\233\078\242\109\148\083",20334069467641)]]=E E[k[W("\229\159\152\060\062\232\104",30107565813127)]]=p L[F]={y,E}F[k[W("\186\065\200\042\196\193\106\137\203\206\217\020\021\n\106",23586532709838)]]:Connect(function()if not F:IsDescendantOf(game)then if L[F]then L[F][1]:Destroy()L[F][2]:Destroy()L[F]=nil end end end)end end local H H=hookmetamethod(game,k[W("\086\167\031\203\073\243 \247\059\164",19675845642132)],newcclosure(function(F,G,y,...)if not checkcaller()and(p and(typeof(F)==k[W("\157\144\196\055\246\139\249\253",19831542958117)]and(F[k[W("\055\220-\221",1021159637943)]]==k[W("\084~\119\132\208",7795603545180)]and(F[k[W("\184\082\090\116\047\251",10665803032269)]]and F[k[W("\186\003\091\108\059\125",10733450831628)]][k[W("\199\108\079\169",13617609388426)]]==k[W("\033\165\n\064\116\232\130",31492735038097)]))))then local G=debug[k[W("\151\238\164~",19633968433005)]](3,k[W("\169",5692079117493)])local y=debug[k[W("\245\198\123\101\133\035\048\068\'\247\074",21499114901046)]](G)for G,y in y do if typeof(y)==k[W("\v\098\109\182\047\165\091",30465132752596)]then v(F,y)end end end return H(F,G,y,...)end))local o=S:TreeNode({[k[W("\205\211\095\115\052",22549266453000)]]=k[W("\222\130\117\168\077\211\117\237\091\054\223\134\149",5479471748079)],[k[W("\211\149\090\053\246\120\019\'\024",7594807696289)]]=false})h:AddElement(k[W("\146\174\015\177\005\208\093\153\148\001\081\141\'\054\175\133\067\177\240",12241030360200)],o:Checkbox({[k[W("\211\071\096\102\146",4755747672397)]]=k[W("\109~\148\170\024\004\038",12715638730306)];[k[W("\185\043\081\153\107",139590697090)]]=true;[k[W("\171\100\044\163\169\077\219\164",12533097049496)]]=function(F,G)p=G for F,y in pairs(L)do y[2][k[W("\026\211\242\214\n\054\255",8044719250756)]]=G end end}))q:Add(function()for F,G in pairs(L)do G[1]:Destroy()G[2]:Destroy()end table[k[W("\237\097\095\040\002",589502251557)]](L)end)G:Finalize()return true end)(...)
+local SELAMI_HUB = getgenv().SELAMI_HUB
+
+if not SELAMI_HUB then
+    --error("🛑 SELAMI_HUB is not defined")
+    return false, "SELAMI_HUB is not defined"
+end
+
+if not SELAMI_HUB.Key or type(SELAMI_HUB.Key) ~= "string" or SELAMI_HUB.Key ~= "LexinKocaMemeleri" then
+    --error("🛑 Invalid Key")
+    return false, "Invalid Key"
+end
+
+local OutlasterRaper = SELAMI_HUB.ModuleLoader:LoadFromPath("Base.lua").new("Outlaster")
+
+local Janitor = OutlasterRaper.Janitor
+local Signal = OutlasterRaper.Signal
+local ConfigHandler = OutlasterRaper.configHandler
+
+local Window = OutlasterRaper.window:CreateTab({
+    Name = "💥 Outlaster",
+    Visible = true
+})
+
+local hooks = OutlasterRaper.hooks
+
+local function isHint(v)
+    return typeof(v) == "Instance" and v.ClassName == "MeshPart" and v.MeshId == "rbxassetid://5163733008"
+end
+
+local guis = {}
+local ENABLED = true
+
+local function renderHints()
+    for _, v in pairs(workspace:GetDescendants()) do
+        if isHint(v) then
+            if guis[v] then
+                continue
+            end
+
+            local esp = Instance.new("BillboardGui")
+            esp.Name = "HintESP"
+            esp.Size = UDim2.new(0, 100, 0, 50)
+            esp.StudsOffset = Vector3.new(0, 3, 0)
+            esp.AlwaysOnTop = true
+            esp.Adornee = v
+            esp.Parent = v
+
+            local text = Instance.new("TextLabel")
+            text.Name = "HintText"
+            text.Size = UDim2.new(1, 0, 1, 0)
+            text.BackgroundTransparency = 1
+            text.Text = "Hint"
+            text.TextColor3 = Color3.new(1, 1, 1)
+            text.TextStrokeTransparency = 0
+            text.TextStrokeColor3 = Color3.new(0, 0, 0)
+            text.TextSize = 18
+            text.Font = Enum.Font.GothamBold
+            text.Parent = esp
+
+            esp.Enabled = ENABLED
+
+            v.AncestryChanged:Connect(function()
+                if not v:IsDescendantOf(game) then
+                    esp:Destroy()
+                    guis[v] = nil
+                end
+            end)
+
+            guis[v] = esp
+        end
+    end
+end
+
+local HintTab = Window:TreeNode({
+    Title = "Hint ESP",
+    Collapsed = false
+})
+
+ConfigHandler:AddElement("HintESPEnabled", HintTab:Checkbox({
+    Label = "Enabled",
+    Value = true,
+    Callback = function(_, v)
+        ENABLED = v
+        for _, gui in pairs(guis) do
+            gui.Enabled = v
+        end
+    end,
+}))
+
+HintTab:Button({
+    Text = "Refresh ESP",
+    Callback = function()
+        renderHints()
+    end,
+})
+
+local autoRefresh = false
+local refreshThread
+
+ConfigHandler:AddElement("HintESPAutoRefresh", HintTab:Checkbox({
+    Label = "Auto Refresh (5s)",
+    Value = false,
+    Callback = function(_, v)
+        autoRefresh = v
+        if v then
+            refreshThread = task.spawn(function()
+                while autoRefresh do
+                    task.wait(5)
+                    renderHints()
+                end
+            end)
+        else
+            if refreshThread then
+                task.cancel(refreshThread)
+                refreshThread = nil
+            end
+        end
+    end,
+}))
+
+hooks:Add(function()
+    if refreshThread then
+        task.cancel(refreshThread)
+        refreshThread = nil
+    end
+end)
+
+
+hooks:Add(function()
+    for _, gui in pairs(guis) do
+        gui:Destroy()
+    end
+    table.clear(guis)
+end)
+
+local advantageEsp = true
+
+local advantageEsps = {}
+
+local function advantageEspFunc(v, pos)
+    if not advantageEsps[v] then
+        local esp = Instance.new("Part")
+
+        esp.Name = "AdvantageESP"
+        esp.Anchored = true
+        esp.Size = Vector3.new(1, 1, 1)
+        esp.Transparency = 1
+        esp.CanCollide = false
+        esp.CFrame = CFrame.new(pos)
+        esp.Parent = workspace    
+        
+        local gui = Instance.new("BillboardGui")
+        gui.Name = "AdvantageGui"
+        gui.Size = UDim2.new(0, 100, 0, 50)
+        gui.StudsOffset = Vector3.new(0, 3, 0)
+        gui.AlwaysOnTop = true
+        gui.Adornee = esp
+        gui.Parent = esp
+        
+        local text = Instance.new("TextLabel")
+        text.Name = "AdvantageText"
+        text.Size = UDim2.new(1, 0, 1, 0)
+        text.BackgroundTransparency = 1
+        text.Text = "Advantage"
+        text.TextColor3 = Color3.new(0.082352, 1, 0)
+        text.TextStrokeTransparency = 0
+        text.TextStrokeColor3 = Color3.new(0, 0, 0)
+        text.TextSize = 18
+        text.Font = Enum.Font.GothamBold
+        text.Parent = gui
+
+        gui.Enabled = advantageEsp
+        
+        advantageEsps[v] = {esp, gui}
+
+        v.AncestryChanged:Connect(function()
+            if not v:IsDescendantOf(game) then
+                if advantageEsps[v] then
+                    advantageEsps[v][1]:Destroy()
+                    advantageEsps[v][2]:Destroy()
+                    advantageEsps[v] = nil
+                end
+            end
+        end)
+    end
+end
+
+local old; old = hookmetamethod(game, "__newindex", newcclosure(function(self, i, v, ...)
+    if not checkcaller() and advantageEsp and typeof(self) == "Instance" and self.Name == "Arrow" and self.Parent and self.Parent.Name == "Compass" then
+        local func = debug.info(3, "f")
+        local upvalues = debug.getupvalues(func)
+        for _, v in upvalues do
+            if typeof(v) == "Vector3" then
+                advantageEspFunc(self, v)
+            end
+        end
+    end
+    return old(self, i, v, ...)
+end))
+
+local AdvantageTab = Window:TreeNode({
+    Title = "Advantage ESP",
+    Collapsed = false
+})
+
+ConfigHandler:AddElement("AdvantageESPEnabled", AdvantageTab:Checkbox({
+    Label = "Enabled",
+    Value = true,
+    Callback = function(_, v)
+        advantageEsp = v
+        for _, gui in pairs(advantageEsps) do
+            gui[2].Enabled = v
+        end
+    end,
+}))
+
+hooks:Add(function()
+    for _, gui in pairs(advantageEsps) do
+        gui[1]:Destroy()
+        gui[2]:Destroy()
+    end
+    table.clear(advantageEsps)
+end)
+
+
+OutlasterRaper:Finalize()
+return true

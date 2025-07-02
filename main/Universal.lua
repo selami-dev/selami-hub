@@ -1,1 +1,65 @@
-return(function(...)local t=function(A)local l,N=A[#A],""for w=1,#l,1 do N=N..l[A[w]]end return N end local d,T do local A=math.floor local l=math.random local N=table.remove local w=string.char local t=0 local s=2 local Y={}local v={}local J=0 local H={}for A=1,256,1 do H[A]=A end repeat local A=l(1,#H)local T=N(H,A)v[T]=w(T-1)until#H==0 local K={}local function Q()if#K==0 then t=(t*93+10214817703209)%35184372088832 repeat s=(s*85)%257 until s~=1 local l=s%32 local N=(A(t/2^(13-(s-l)/32))%4294967296)/2^l local w=A((N%1)*4294967296)+A(N)local T=w%65536 local d=(w-T)/65536 local Y=T%256 local v=(T-Y)/256 local J=d%256 local H=(d-J)/256 K={Y;v;J;H}end return table.remove(K)end local m={}d=setmetatable({},{__index=m,__metatable=nil})function T(A,l)local N=m if N[l]then else K={}local w=v t=l%35184372088832 s=l%255+2 local T=string.len(A)N[l]=""local d=229 for T=1,T,1 do d=((string.byte(A,T)+Q())+d)%256 N[l]=N[l]..w[d+1]end end return l end end if not SELAMI_HUB then return false,d[T("\240\216\238",33290233706779)]end if not SELAMI_HUB[d[T("\251\029\223",9252715667881)]]or type(SELAMI_HUB[d[T("\213\t\236",7179256928798)]])~=d[T("\189\124\155\237\133\173",11154370472084)]or SELAMI_HUB[d[T("\t\252\090",29445046889246)]]~=d[T("\160\005\176\105\182\119\253\064\188\n\227\196-\v\250\147\132",6990272600430)]then return false,d[T("\025\095\113\b-\114\062\183\029\r\252",12553498766763)]end local A=(SELAMI_HUB[d[T("\173\205\127\103\148\078\176\205\202\141\241\"",22156264951962)]]:LoadFromPath(d[T("\177\147\185\218\040\017\199\150",22343101731144)]))[d[T("\001\222\014",15803814459774)]](d[T("\196\234\163\174\139\087\207\146\091",3854850788870)])local l=A[d[T("\229\145\171\054\090\092",19003662746914)]]:CreateTab({[d[T("\073\105\203\163",12406391647522)]]=d[T("\181\v\064\178\029\117\224\027\124\004\238\124\145\101",2980798270168)];[d[T("\098\025\235\002\213\252\239",15262632064902)]]=true})local N=l:CollapsingHeader({[d[T("\164\135\164\220\172",3084954405689)]]=d[T("\088\204\138\056\016\107\026\140\130\046",17965322715483)],[d[T("\223\r\062\113\185\233\101\205\057",4388516761591)]]=true})N:Button({[d[T("~\218\049\145",833249084168)]]=d[T("\119\178\245\207\185\026\232\044\215",15212164659031)],[d[T("\005\162\089\a\200\081\163\177",14110471926613)]]=function()local l=d[T("\241\029\051\014\080\055",30865650675785)]local N=d[T("\099\178\124\210\216\154\235\231",31767621333905)]local function w(A)return(loadstring(game:HttpGetAsync(d[T("\120\234\234\184\086\t\030\131\214\027\067\r\096\082\147\120\020\178\106\165\176\022\132\136\064\185\043\086\"\140\075\210\198\014\250\137\197\209\066\170\231\081\072\024\026\107\072\092\202\246\065\101\095\124\087\044",5630873965692)]:format(l,N,A)),A..d[T("\247\176\096\165",28008336483812)]))()end w(d[T("\167\128\r\064",32955216033763)])w(d[T("\141\133\064\095\162\178\092",1981114124085)])A:Notify(d[T("\043\184\049\130\078\228\151\133\096\127",18003978600831)],d[T("\253\041\055\253\183\150\077\020\018\175\183\066\100\037\178\062\168\123\023\173\r\139\203\218\139\000\206\130\069\048",31150200942930)],3,true)end})local w=l:CollapsingHeader({[d[T("\173\247\167\188\043",17441320714099)]]=d[T("\078\078\121\121\026\152\a\056\165\120\223~\202\098\099\069\047",4182352039735)],[d[T("\076\052\116\143\245\085\018~\089",15568657823907)]]=true})w:Button({[d[T("\181\118\158\191",25467785796774)]]=d[T("\098\187\247\207\242\056\002\v\002\072\004\004\154\166",4524886134902)],[d[T("\t\083\096\105\179\192\096\137",22936899081073)]]=function()(loadstring(game:HttpGet(d[T("\218\085\173\033\135\230\183\136\061\005\057\226\129\054\079\193\024\232\191\138\191\040\006\206\036\060\056\135\200\211\222\049\026\210\139\248\189\085\107\204\225\086\119\002\055\158\247\025\228\143\079\071\097\033\244\130\178\054\167\006\174\"\106\104\211\191\128\244",32277664265580)])))()A:Notify(d[T("\052\012\004\226\038\119\189\038\070\027\153\194\254\024\214\136\136",34125630340133)],d[T("\219\181\180\075\147\019\081\000\135\048\189\119\r\222\089\225\078\080\056\135\117\144\120\115\121\037\057\160\036\148\109\211\170\201\138",24648495782315)],3,true)end})A:Finalize()return true end)(...)
+--[[
+    Selami Hub - Universal Script
+    Only for selamists.. ⛺
+]]
+
+--print("Selami Hub Universal script loaded!")
+
+-- Your universal script features will go here
+
+if not SELAMI_HUB then
+	return false, "Wtf"
+end
+
+if not SELAMI_HUB.Key or type(SELAMI_HUB.Key) ~= "string" or SELAMI_HUB.Key ~= "LexinKocaMemeleri" then
+	return false, "Invalid Key"
+end
+
+local BaseScript = SELAMI_HUB.ModuleLoader:LoadFromPath("Base.lua").new("Universal")
+
+local UniversalTab = BaseScript.window:CreateTab({
+	Name = "🌐 Universal",
+	Visible = true,
+})
+
+local DebugHeader = UniversalTab:CollapsingHeader({
+	Title = "🐍 Debug",
+	Collapsed = true,
+})
+
+DebugHeader:Button({
+	Text = "Hydroxide",
+	Callback = function()
+		local owner = "Upbolt"
+		local branch = "revision"
+
+		local function webImport(file)
+			return loadstring(
+				game:HttpGetAsync(
+					("https://raw.githubusercontent.com/%s/Hydroxide/%s/%s.lua"):format(owner, branch, file)
+				),
+				file .. ".lua"
+			)()
+		end
+
+		webImport("init")
+		webImport("ui/main")
+		BaseScript:Notify("🐍 Debug", "Hydroxide loaded successfully!", 3, true)
+	end,
+})
+
+local CommandBarsHeader = UniversalTab:CollapsingHeader({
+	Title = "💻 Command Bars",
+	Collapsed = true,
+})
+
+CommandBarsHeader:Button({
+	Text = "Infinite Yield",
+	Callback = function()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+		BaseScript:Notify("💻 Command Bars", "Infinite Yield loaded successfully!", 3, true)
+	end,
+})
+
+BaseScript:Finalize()
+return true

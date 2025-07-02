@@ -1,1 +1,111 @@
-return(function(...)local z=function(d)local M=""for Z=1,#d/2,1 do M=M..d[#d/2+d[Z]]end return M end local Z,M do local d=math.floor local z=math.random local Q=table.remove local q=string.char local e=0 local n=2 local E={}local U={}local K=0 local j={}for d=1,256,1 do j[d]=d end repeat local d=z(1,#j)local M=Q(j,d)U[M]=q(M-1)until#j==0 local r={}local function O()if#r==0 then e=(e*93+10214817703209)%35184372088832 repeat n=(n*85)%257 until n~=1 local M=n%32 local Z=(d(e/2^(13-(n-M)/32))%4294967296)/2^M local z=d((Z%1)*4294967296)+d(Z)local Q=z%65536 local q=(z-Q)/65536 local E=Q%256 local U=(Q-E)/256 local K=q%256 local j=(q-K)/256 r={E,U,K;j}end return table.remove(r)end local b={}Z=setmetatable({},{__index=b,__metatable=nil})function M(d,Z)local z=b if z[Z]then else r={}local M=U e=Z%35184372088832 n=Z%255+2 local Q=string.len(d)z[Z]=""local q=229 for Q=1,Q,1 do q=((string.byte(d,Q)+O())+q)%256 z[Z]=z[Z]..M[q+1]end end return Z end end local function d(d)local z=(loadstring(game:HttpGet(Z[M("\001\199\252\130\093\237\162\084\084\134\135\181\073\024\049\145\029\057\054\184\229\144\135\088\223\226\100\247\160\083\229\033\105\002\127\220\074\130\212\128\175\101\105\033\016\222\169\179\094\090\075\157\122\134\210\046\117\028\198\138\223\051\150\241\232\016\169\052\a\169\230\122\160\188\075\202\163\134\014\255\218\168\016\212\151\218\018\086\112\150\125\165\125\042\047\197\068\133",33290233706779)])))()local Q=(getgenv())[Z[M("\003\245\210\251\038\177\075\132\062\128",9252715667881)]]or{};(getgenv())[Z[M("\221\225\223\109\044\206\166\141\226\082",7179256928798)]]=Q Q[Z[M("\151\157\146\a\119\173\071\253\111\012\127\148",11154370472084)]]=z Q[Z[M("\t\252\090",29445046889246)]]=d[Z[M("\159\006\177",6990272600430)]]local q,e=Q[Z[M("\029\092\094\046\025\110\042\030\228\246\233\091",12553498766763)]]:LoadFromPath(Z[M("\162\202\156\072\102\147\210\150",22156264951962)])if not q then return(game:GetService(Z[M("\191\144\156\000\075\224\191",22343101731144)]))[Z[M("\223\n\240\242\005\083\017\211\062\253\132",15803814459774)]]:Kick(e)end local n=q:Notify(Z[M("\081\138\183\023\207\092\213\153\092\067\215\102~\252\182\020\175\163\149\079\226",3854850788870)],Z[M("\080\073\181\197\123\119\207\176\137\203\004\152\224\119\215\139\067\206\118\027\030\082\119\017\076\198\198\074\105\243\138 \123",19003662746914)],nil,7383525713)local E=Q[Z[M("\072\120\180\188\095\205\151\203\042\084\238\180",12406391647522)]]:LoadFromPath(Z[M("\026\123\072\177\080\101\216\'\104 \224~\165\046\231\052\182\200\090\168\246\092\074\180\090\129\168\089\188\212",2980798270168)])local U={}local function K(d,...)for M,Z in{...}do U[Z]=d end end K(Z[M("\098\031\222\012\213\006\223\248\161\114\213\254\192\133\239\092\128",15262632064902)],6931042565)K(Z[M("\145\159\148\232\171\182\230\150\"",3084954405689)],6115988515)K(Z[M("\169\086\148\056\112\046\014\162\094\065",17965322715483)],6945584306)K(Z[M("\235\a\064\105\185\236\099\204\071",4388516761591)],1871908106)local function j(d,z)if not d and z then n:Destroy()q:Notify(Z[M("\012\130-\v\112\067\128\014\159\037\108\122\047\247\213\067\236\225\238\230\137",833249084168)],Z[M("\017\057\016\016\133\232\074\236\197\066\221\040\042\114\185\035\026~\079\023\079\090\195\016\070\072\133\036\031\062\213\186\243",15212164659031)]..z,5,9066167010)return end return z end local r=game[Z[M("\t\158\090\255\182\109",14110471926613)]]local O=U[r]if O and not d[Z[M("\234\035\038\018\090\040\049\092\191\198\204\172\082\196\068\110\222",30865650675785)]]then E(O,Z[M("\089\203\107\219\209\107\218\232\033\211\054\168\002\177\174\084\106\103\180\163\059\069\043\079\229\195\076\169\190\207\248\051\109\208\065\188\025\246\109\254\184\099\171\033\026\134\005\078\019\a\116\015\091\085\168\129\036\014\108\127\096\018\065\000\219\067\153\121\181\181\255\080\043\162\037\107\202\138\072\"\060\116\105\005\254\238\074",31767621333905)],d)end local function b(d)local z,q=Q[Z[M("\093\000\223\205\074\059\016\166\133\047\046\099",5630873965692)]]:LoadFromPath(d)j(z,q)return z,q end if not game:IsLoaded()then game[Z[M("\021\149\073\188\185\219",28008336483812)]]:Wait()end if d[Z[M("\146\140 \054\176\025\163\239",32955216033763)]]then b(Z[M("\108\162\136\"\104\232\096\193",1981114124085)])return end if O then local d=b(Z[M("\130\035\076\125\201\124",18003978600831)]..(O..Z[M("\228\018\113\234\197\071\154\"\253",31150200942930)]))if not d then return end end if not O or d[Z[M("\159\v\159\181\052\031\125\103\089\247\036\028\225\235",17441320714099)]]then b(Z[M("\179\184\129\093\164\130\220\040\176\070\016\145\250",4182352039735)])end n:Destroy()q:Notify(Z[M("\235\193\134\005\051\088\022\129\102\123\128\b\016\065\212\089\084\076\143\155\040",15568657823907)],Z[M("\067\031\116\094\091\166\254\a\148\036\106\128\033\141\149\113\030\249\239\023\065\153\053\193\184\105\099\107\240\093\169\239\224\043\232\048\139\078\234\082\250\252\205",25467785796774)],5,8400923343)end return d end)(...)
+--[[
+    Selami Hub Loader
+    Only for selamists.. ⛺
+
+    local Args = {
+        Key = "LexinKocaMemeleri",
+        ForceUniversal = false,
+    }
+    
+    local SelamiHub = loadstring(game:HttpGet("https://raw.githubusercontent.com/selami-dev/selami-hub/refs/heads/main/main/Loader.lua"))()(Args)
+]]
+
+local function start(LAUNCH_ARGS)
+	local MODULE_LOADER = loadstring(
+		game:HttpGet(
+			"https://raw.githubusercontent.com/selami-dev/selami-hub/refs/heads/main/main/Util/ModuleLoader.lua"
+		)
+	)()
+
+	local SELAMI_HUB = getgenv().SELAMI_HUB or {}
+	getgenv().SELAMI_HUB = SELAMI_HUB
+
+	SELAMI_HUB.ModuleLoader = MODULE_LOADER
+	SELAMI_HUB.Key = LAUNCH_ARGS.Key
+
+	local BaseScript, message = SELAMI_HUB.ModuleLoader:LoadFromPath("Base.lua")
+	if not BaseScript then
+		return game:GetService("Players").LocalPlayer:Kick(message)
+	end
+
+	local loadingNotif =
+		BaseScript:Notify("⛪ Selami Hub Loader", "⌛ Loading (May take a while...)", nil, 7383525713)
+
+	local TeleportHandler = SELAMI_HUB.ModuleLoader:LoadFromPath("Util/TeleportHandler/Queue.lua")
+
+	local supportedGames = {
+		-- [gameId] = "ScriptName",
+		-- Example: [1234567890] = "AdoptMe",
+	}
+
+	local function addToSupportedGames(scriptName, ...)
+		for _, gameId in { ... } do
+			supportedGames[gameId] = scriptName
+		end
+	end
+
+	--https://apis.roblox.com/universes/v1/places/94647229517154/universe [API]
+	addToSupportedGames("VolleyballLegends", 6931042565)
+	addToSupportedGames("AnimeSaga", 6115988515)
+	addToSupportedGames("AzureLatch", 6945584306)
+	addToSupportedGames("Outlaster", 1871908106)
+
+	-- Loading
+	local function handleOutput(Success, Result)
+		if not Success and Result then
+			loadingNotif:Destroy()
+			BaseScript:Notify("⛪ Selami Hub Loader", "⚠️❌ Failed to load script: " .. Result, 5, 9066167010)
+			--error("🛑 Failed to load script: " .. (Result or "Unknown"))
+			return
+		end
+		return Result
+	end
+
+	-- Load Base Script
+	local gameId = game.GameId
+	local scriptName = supportedGames[gameId]
+
+	if scriptName and not LAUNCH_ARGS.NoTeleportHandler then
+		TeleportHandler(
+			scriptName,
+			"https://raw.githubusercontent.com/selami-dev/selami-hub/refs/heads/main/main/Loader.lua",
+			LAUNCH_ARGS
+		)
+	end
+
+	local function loadScript(path)
+		local Success, Result = SELAMI_HUB.ModuleLoader:LoadFromPath(path)
+		handleOutput(Success, Result)
+		return Success, Result
+	end
+
+	if not game:IsLoaded() then
+		--print("Waiting for game to load")
+		game.Loaded:Wait()
+	end
+
+	if LAUNCH_ARGS.TestMode then
+		loadScript("Test.lua")
+		return
+	end
+
+	if scriptName then
+		--print("Loading specific game script")
+		-- Load specific game script
+		local success = loadScript("Games/" .. scriptName .. "/Init.lua")
+		if not success then
+			return
+		end
+	end
+
+	if not scriptName or LAUNCH_ARGS.ForceUniversal then
+		--print("Loading universal script")
+		-- Load Universal Script
+		loadScript("Universal.lua")
+	end
+
+	loadingNotif:Destroy()
+	BaseScript:Notify("⛪ Selami Hub Loader", "✅ Successfully loaded Selami Hub 🤑💸", 5, 8400923343)
+end
+
+return start
