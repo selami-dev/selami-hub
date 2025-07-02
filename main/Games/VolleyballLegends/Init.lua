@@ -1870,17 +1870,15 @@ do
 		local oldMove
 		oldMove = hookfunction(
 			gameController.DoMove,
-			newcclosure(function(_, name, ...)
+			newcclosure(function(_, name, one, two, three, four, five, six, ...)
 				if NO_DEBOUNCE_ENABLED then
-					local args = table.pack(...)
-					args[2] = false
-					args[6] = 0
+					print(one, two, three, four, five, six)
+					two = false
+					six = 0
 
-					print(HaikyuuRaper:Serialize(args))
-
-					return oldMove(_, name, table.unpack(args, 1, args.n))
+					return oldMove(_, name, one, two, three, four, five, six, ...)
 				end
-				return oldMove(_, name, ...)
+				return oldMove(_, name, one, two, three, four, five, six, ...)
 			end)
 		)
 	end
