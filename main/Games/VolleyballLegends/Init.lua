@@ -1815,6 +1815,7 @@ do
 		local val = gameController.IsBusy
 
 		local ENABLED = false
+		local NO_DEBOUNCE_ENABLED = false
 
 		local NoCooldownsNode = InternalTab:TreeNode({
 			Title = "No Cooldowns",
@@ -1824,7 +1825,7 @@ do
 		ConfigHandler:AddElement(
 			"NoCooldownsToggle",
 			NoCooldownsNode:Checkbox({
-				Label = "Enabled",
+				Label = "No Cooldown",
 				Value = ENABLED,
 				Callback = function(_, v)
 					ENABLED = v
@@ -1832,8 +1833,20 @@ do
 			})
 		)
 
+		ConfigHandler:AddElement(
+			"NoDebounceToggle",
+			NoCooldownsNode:Checkbox({
+				Label = "No Debounce",
+				Value = NO_DEBOUNCE_ENABLED,
+				Callback = function(_, v)
+					NO_DEBOUNCE_ENABLED = v
+				end,
+			})
+		)
+
 		hooks:Add(function()
 			ENABLED = false
+			NO_DEBOUNCE_ENABLED = false
 		end)
 
 		if ENABLED then
@@ -1854,17 +1867,15 @@ do
 			end)
 		)
 
-		local spikeClock = os.clock()
 		local oldMove
 		oldMove = hookfunction(
 			gameController.DoMove,
 			newcclosure(function(_, name, ...)
-				if ENABLED and not checkcaller() and (rawequal(name, "Spike") or rawequal(name, "Block")) then
-					if os.clock() - spikeClock < 0.25 + LocalPlayer:GetNetworkPing() then
-						return
-					else
-						spikeClock = os.clock()
-					end
+				if NO_DEBOUNCE_ENABLED then
+					local args = { ... }
+					args[2] = false
+					args[6] = 0
+					return oldMove(_, name, table.unpack(args))
 				end
 				return oldMove(_, name, ...)
 			end)
