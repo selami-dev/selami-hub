@@ -1875,6 +1875,9 @@ do
 					local args = table.pack(...)
 					args[2] = false
 					args[6] = 0
+
+					print(HaikyuuRaper:Serialize(args))
+
 					return oldMove(_, name, table.unpack(args, 1, args.n))
 				end
 				return oldMove(_, name, ...)
