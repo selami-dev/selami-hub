@@ -3196,35 +3196,32 @@ do
 
 							-- Check if ball or landing position is close enough to set
 							local ballPosition = ballPart:GetPivot().Position
-
 							local dir = (BallTrajectory.LastTrajectory - rootPart.Position).Unit
-							local function ssss()
-								if ReplicatedStorage:GetAttribute("Gamemode") ~= "Training" then
-									if
-										not ReplicatedStorage:GetAttribute("LastHitType")
-										or not ReplicatedStorage:GetAttribute("TeamHitStreak")
-									then
-										return
-									end
 
-									-- Check if landing position is on the same side as the player
-									local isLandingOnPlayersSide = (
-										isPlayerOnPositiveZSide and landingPosition.Z > courtPosition.Z
-									)
-										or (not isPlayerOnPositiveZSide and landingPosition.Z < courtPosition.Z)
-
-									if not isLandingOnPlayersSide then
-										return
-									end
+							if ReplicatedStorage:GetAttribute("Gamemode") ~= "Training" then
+								if
+									not ReplicatedStorage:GetAttribute("LastHitType")
+									or not ReplicatedStorage:GetAttribute("TeamHitStreak")
+								then
+									continue
 								end
 
-								humanoid.WalkToPoint = BallTrajectory.LastTrajectory * Vector3.new(1, 0, 1)
-									+ rootPart.Position * Vector3.new(0, 1, 0)
-							end
-							ssss()
+								-- Check if landing position is on the same side as the player
+								local isLandingOnPlayersSide = (
+									isPlayerOnPositiveZSide and landingPosition.Z > courtPosition.Z
+								)
+									or (not isPlayerOnPositiveZSide and landingPosition.Z < courtPosition.Z)
 
-							if AutoFarmConfig.Blatant then
-								rootPart.CFrame = CFrame.new(ballPart:GetPivot().Position) * rootPart.CFrame.Rotation
+								if not isLandingOnPlayersSide then
+									continue
+								end
+							end
+
+							humanoid.WalkToPoint = BallTrajectory.LastTrajectory * Vector3.new(1, 0, 1)
+								+ rootPart.Position * Vector3.new(0, 1, 0)
+
+							if AutoFarmConfig.Blatant and ballPosition.Y - courtPosition.Y > 10 then
+								--rootPart.CFrame = CFrame.new(ballPart:GetPivot().Position) * rootPart.CFrame.Rotation
 
 								if os.clock() - blatantClock < 0.5 then
 									continue
@@ -3250,23 +3247,23 @@ do
 								}
 
 								interactRemote:InvokeServer(unpack(args))
-							end
-
-							local ballToPlayerDist = (ballPosition - playerPosition).Magnitude
-							local landingToPlayerDist = (landingPosition - playerPosition).Magnitude
-							local setRange = 7 * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS["Bump"] or 1)
-							if
-								(ballToPlayerDist <= setRange)
-								or (
-									timeToLand < 0.25 + 0.5 * LocalPlayer:GetNetworkPing()
-									and landingToPlayerDist <= setRange
-								)
-							then
-								-- Ball or landing position is close enough to set
-								setthreadidentity(2)
-								gameController:DoMove("Bump")
-								setthreadidentity(8)
-								continue
+							else
+								local ballToPlayerDist = (ballPosition - playerPosition).Magnitude
+								local landingToPlayerDist = (landingPosition - playerPosition).Magnitude
+								local setRange = 7 * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS["Bump"] or 1)
+								if
+									(ballToPlayerDist <= setRange)
+									or (
+										timeToLand < 0.25 + 0.5 * LocalPlayer:GetNetworkPing()
+										and landingToPlayerDist <= setRange
+									)
+								then
+									-- Ball or landing position is close enough to set
+									setthreadidentity(2)
+									gameController:DoMove("Bump")
+									setthreadidentity(8)
+									continue
+								end
 							end
 						end
 					end))
