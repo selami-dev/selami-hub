@@ -3230,7 +3230,9 @@ do
 								+ rootPart.Position * Vector3.new(0, 1, 0)
 
 							if AutoFarmConfig.Blatant and ballPosition.Y - courtPosition.Y > 10 then
-								rootPart.CFrame = CFrame.new(ballPart:GetPivot().Position) * rootPart.CFrame.Rotation
+								rootPart.CFrame = CFrame.new(
+									landingPosition + rootPart.CFrame.Position * Vector3.new(0, 1, 0)
+								) * rootPart.CFrame.Rotation
 
 								if os.clock() - blatantClock < 0.5 then
 									continue
