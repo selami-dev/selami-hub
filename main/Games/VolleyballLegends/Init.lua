@@ -3084,7 +3084,7 @@ do
 		end
 	end
 
-	local spikeHitboxSize = ReplicatedStorage.Assets.Hitboxes.Spike.Size
+	local spikeHitboxSize = ReplicatedStorage.Assets.Hitboxes.Spike.Part.Size
 	local interactRemote = ReplicatedStorage:WaitForChild("Packages")
 		:WaitForChild("_Index")
 		:WaitForChild("sleitnick_knit@1.7.0")
