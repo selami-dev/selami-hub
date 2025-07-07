@@ -8,6 +8,8 @@ function ModuleLoader.new()
 end
 
 function ModuleLoader:LoadFromLink(link)
+	warn("Loading module from link: " .. link)
+
 	if self.loadedModules[link] then
 		return unpack(self.loadedModules[link].Result)
 	end
