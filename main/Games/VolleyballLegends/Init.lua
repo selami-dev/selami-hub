@@ -3209,8 +3209,14 @@ do
 
 							if ReplicatedStorage:GetAttribute("Gamemode") ~= "Training" then
 								if
-									not ReplicatedStorage:GetAttribute("LastHitType")
-									or not ReplicatedStorage:GetAttribute("TeamHitStreak")
+									ReplicatedStorage:GetAttribute("ServedByPlayer") ~= LocalPlayer.Name
+									and ReplicatedStorage:GetAttribute("ServedByPlayer") ~= nil
+									--[[
+									and (
+										not ReplicatedStorage:GetAttribute("LastHitType")
+										or not ReplicatedStorage:GetAttribute("TeamHitStreak")
+									)
+									]]
 								then
 									continue
 								end
@@ -3226,56 +3232,62 @@ do
 								end
 							end
 
+							-- Check if current ball position is on player's side
+							local isBallOnPlayersSide = (isPlayerOnPositiveZSide and ballPosition.Z > courtPosition.Z)
+								or (not isPlayerOnPositiveZSide and ballPosition.Z < courtPosition.Z)
+
+							if AutoFarmConfig.Blatant then
+								if ballPosition.Y - courtPosition.Y > 10 and isBallOnPlayersSide then
+									rootPart.CFrame = CFrame.new(
+										landingPosition * Vector3.new(1, 0, 1)
+											+ rootPart.CFrame.Position * Vector3.new(0, 1, 0)
+									) * rootPart.CFrame.Rotation
+
+									if os.clock() - blatantClock < 0.5 then
+										continue
+									end
+
+									blatantClock = os.clock()
+
+									local args = {
+										{
+											Charge = 1,
+											Action = "Spike",
+											SpecialCharge = 1,
+											TiltDirection = Vector3.new(0, 1, 0),
+											BallId = ballPart:GetAttribute("ServerId"),
+											MoveDirection = Vector3.new(0, 0, 0),
+											From = "Client",
+											HitboxSize = spikeHitboxSize,
+											LookVector = (
+												CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
+												- rootPart.Position * Vector3.new(1, 0, 1)
+											).Unit,
+										},
+									}
+
+									interactRemote:InvokeServer(unpack(args))
+									continue
+								end
+							end
+
 							humanoid.WalkToPoint = BallTrajectory.LastTrajectory * Vector3.new(1, 0, 1)
 								+ rootPart.Position * Vector3.new(0, 1, 0)
-
-							if AutoFarmConfig.Blatant and ballPosition.Y - courtPosition.Y > 10 then
-								rootPart.CFrame = CFrame.new(
-									landingPosition * Vector3.new(1, 0, 1)
-										+ rootPart.CFrame.Position * Vector3.new(0, 1, 0)
-								) * rootPart.CFrame.Rotation
-
-								if os.clock() - blatantClock < 0.5 then
-									continue
-								end
-
-								blatantClock = os.clock()
-
-								local args = {
-									{
-										Charge = 1,
-										Action = "Spike",
-										SpecialCharge = 1,
-										TiltDirection = Vector3.new(0, 1, 0),
-										BallId = ballPart:GetAttribute("ServerId"),
-										MoveDirection = Vector3.new(0, 0, 0),
-										From = "Client",
-										HitboxSize = spikeHitboxSize,
-										LookVector = (
-											CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
-											- rootPart.Position * Vector3.new(1, 0, 1)
-										).Unit,
-									},
-								}
-
-								interactRemote:InvokeServer(unpack(args))
-							else
-								local ballToPlayerDist = (ballPosition - playerPosition).Magnitude
-								local landingToPlayerDist = (landingPosition - playerPosition).Magnitude
-								local setRange = 7 * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS["Bump"] or 1)
-								if
-									(ballToPlayerDist <= setRange)
-									or (
-										timeToLand < 0.25 + 0.5 * LocalPlayer:GetNetworkPing()
-										and landingToPlayerDist <= setRange
-									)
-								then
-									-- Ball or landing position is close enough to set
-									setthreadidentity(2)
-									gameController:DoMove("Bump")
-									setthreadidentity(8)
-									continue
-								end
+							local ballToPlayerDist = (ballPosition - playerPosition).Magnitude
+							local landingToPlayerDist = (landingPosition - playerPosition).Magnitude
+							local setRange = 7 * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS["Bump"] or 1)
+							if
+								(ballToPlayerDist <= setRange)
+								or (
+									timeToLand < 0.25 + 0.5 * LocalPlayer:GetNetworkPing()
+									and landingToPlayerDist <= setRange
+								)
+							then
+								-- Ball or landing position is close enough to set
+								setthreadidentity(2)
+								gameController:DoMove("Bump")
+								setthreadidentity(8)
+								continue
 							end
 						end
 					end))
