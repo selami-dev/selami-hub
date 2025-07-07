@@ -3231,7 +3231,8 @@ do
 
 							if AutoFarmConfig.Blatant and ballPosition.Y - courtPosition.Y > 10 then
 								rootPart.CFrame = CFrame.new(
-									landingPosition + rootPart.CFrame.Position * Vector3.new(0, 1, 0)
+									landingPosition * Vector3.new(1, 0, 1)
+										+ rootPart.CFrame.Position * Vector3.new(0, 1, 0)
 								) * rootPart.CFrame.Rotation
 
 								if os.clock() - blatantClock < 0.5 then
