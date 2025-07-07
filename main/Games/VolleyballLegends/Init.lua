@@ -3138,7 +3138,16 @@ do
 									Vector3.new(0, 0, 0),
 									0.5,
 								}
-								interactRemote:InvokeServer(unpack(args))
+								game:GetService("ReplicatedStorage")
+									:WaitForChild("Packages")
+									:WaitForChild("_Index")
+									:WaitForChild("sleitnick_knit@1.7.0")
+									:WaitForChild("knit")
+									:WaitForChild("Services")
+									:WaitForChild("GameService")
+									:WaitForChild("RF")
+									:WaitForChild("Serve")
+									:InvokeServer(unpack(args))
 								continue
 							end
 
@@ -3221,7 +3230,7 @@ do
 								+ rootPart.Position * Vector3.new(0, 1, 0)
 
 							if AutoFarmConfig.Blatant and ballPosition.Y - courtPosition.Y > 10 then
-								--rootPart.CFrame = CFrame.new(ballPart:GetPivot().Position) * rootPart.CFrame.Rotation
+								rootPart.CFrame = CFrame.new(ballPart:GetPivot().Position) * rootPart.CFrame.Rotation
 
 								if os.clock() - blatantClock < 0.5 then
 									continue
