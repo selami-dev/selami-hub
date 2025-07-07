@@ -3242,7 +3242,6 @@ do
 									setthreadidentity(2)
 									gameController:DoMove("Bump")
 									setthreadidentity(8)
-									continue
 								end
 							end
 
