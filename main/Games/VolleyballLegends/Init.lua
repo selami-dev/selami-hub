@@ -2061,6 +2061,9 @@ do
 		local USER_REACTION_TIME_ENABLED = true
 		local REACTION_TIME_ENABLED = true
 
+		local DIVE_ANGLE_ENABLED = true
+		local DIVE_ANGLE = 0
+
 		local function getMoveDirectionToLanding(landingPosition)
 			if not landingPosition then
 				return nil
@@ -2136,6 +2139,18 @@ do
 			local ball, landingPosition, timeToLand =
 				BallTrajectory.LastBall, BallTrajectory.LastTrajectory, BallTrajectory.LastTime
 			latestDiveDir = getMoveDirectionToLanding(landingPosition)
+
+			if latestDiveDir and DIVE_ANGLE_ENABLED then
+				local randomAngle = math.random(-DIVE_ANGLE, DIVE_ANGLE)
+				-- Use cos and sin to rotate latestDiveDir by randomAngle (in degrees) around the Y axis
+				local angleRad = math.rad(randomAngle)
+				local cosA = math.cos(angleRad)
+				local sinA = math.sin(angleRad)
+				local x = latestDiveDir.X * cosA - latestDiveDir.Z * sinA
+				local z = latestDiveDir.X * sinA + latestDiveDir.Z * cosA
+				local newDir = Vector3.new(x, latestDiveDir.Y, z).Unit
+				latestDiveDir = newDir
+			end
 
 			if not ENABLED or not (SET_ENABLED or DIVE_ENABLED) then
 				return
@@ -2406,6 +2421,30 @@ do
 				Maximum = 1,
 				Callback = function(_, v)
 					USER_REACTION_TIME = v
+				end,
+			})
+		)
+
+		ConfigHandler:AddElement(
+			"AutoReceiveDiveAngleEnabled",
+			AutoReceiveNode:Checkbox({
+				Label = "Dive Angle",
+				Value = DIVE_ANGLE_ENABLED,
+				Callback = function(_, v)
+					DIVE_ANGLE_ENABLED = v
+				end,
+			})
+		)
+
+		ConfigHandler:AddElement(
+			"AutoReceiveDiveAngle",
+			AutoReceiveNode:SliderInt({
+				Label = "(degrees)",
+				Value = DIVE_ANGLE,
+				Minimum = 0,
+				Maximum = 30,
+				Callback = function(_, v)
+					DIVE_ANGLE = v
 				end,
 			})
 		)
@@ -3012,6 +3051,7 @@ do
 
 	local AutoFarmConfig = {
 		Enabled = false,
+		Blatant = true,
 	}
 
 	local jan = Janitor.new()
@@ -3043,6 +3083,16 @@ do
 			end
 		end
 	end
+
+	local spikeHitboxSize = ReplicatedStorage.Assets.Hitboxes.Spike.Size
+	local interactRemote = ReplicatedStorage:WaitForChild("Packages")
+		:WaitForChild("_Index")
+		:WaitForChild("sleitnick_knit@1.7.0")
+		:WaitForChild("knit")
+		:WaitForChild("Services")
+		:WaitForChild("BallService")
+		:WaitForChild("RF")
+		:WaitForChild("Interact")
 
 	local function toggle(enabled)
 		if enabled == AutoFarmConfig.Enabled then
@@ -3078,6 +3128,8 @@ do
 						"TeamChangeConnection"
 					)
 
+					local blatantClock = os.clock()
+
 					-->> autoplay
 					inroundJan:Add(task.defer(function()
 						while RunService.Heartbeat:Wait() do
@@ -3086,16 +3138,7 @@ do
 									Vector3.new(0, 0, 0),
 									0.5,
 								}
-								game:GetService("ReplicatedStorage")
-									:WaitForChild("Packages")
-									:WaitForChild("_Index")
-									:WaitForChild("sleitnick_knit@1.7.0")
-									:WaitForChild("knit")
-									:WaitForChild("Services")
-									:WaitForChild("GameService")
-									:WaitForChild("RF")
-									:WaitForChild("Serve")
-									:InvokeServer(unpack(args))
+								interactRemote:InvokeServer(unpack(args))
 								continue
 							end
 
@@ -3180,10 +3223,38 @@ do
 							end
 							ssss()
 
+							if AutoFarmConfig.Blatant then
+								rootPart.CFrame = CFrame.new(ballPart:GetPivot().Position) * rootPart.CFrame.Rotation
+
+								if os.clock() - blatantClock < 0.5 then
+									continue
+								end
+
+								blatantClock = os.clock()
+
+								local args = {
+									{
+										Charge = 1,
+										Action = "Spike",
+										SpecialCharge = 1,
+										TiltDirection = Vector3.new(0, 1, 0),
+										BallId = ballPart:GetAttribute("ServerId"),
+										MoveDirection = Vector3.new(0, 0, 0),
+										From = "Client",
+										HitboxSize = spikeHitboxSize,
+										LookVector = (
+											CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
+											- rootPart.Position * Vector3.new(1, 0, 1)
+										).Unit,
+									},
+								}
+
+								interactRemote:InvokeServer(unpack(args))
+							end
+
 							local ballToPlayerDist = (ballPosition - playerPosition).Magnitude
 							local landingToPlayerDist = (landingPosition - playerPosition).Magnitude
 							local setRange = 7 * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS["Bump"] or 1)
-
 							if
 								(ballToPlayerDist <= setRange)
 								or (
@@ -3222,6 +3293,17 @@ do
 			toggle(v)
 		end,
 	})
+
+	ConfigHandler:AddElement(
+		"AutoFarmBlatant",
+		AutoFarmTab:Checkbox({
+			Label = "Blatant",
+			Value = AutoFarmConfig.Blatant,
+			Callback = function(_, v)
+				AutoFarmConfig.Blatant = v
+			end,
+		})
+	)
 
 	ConfigHandler:AddElement("AutoFarmToggle", toggleCheckbox)
 end
