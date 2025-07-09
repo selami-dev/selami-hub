@@ -3261,9 +3261,11 @@ do
 											CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
 										).Rotation
 
-									if os.clock() - blatantClock > 0.5 then
+									if os.clock() - blatantClock > 0.1 then
 										blatantClock = os.clock()
-										bump()
+										setthreadidentity(2)
+										gameController:DoMove("Bump")
+										setthreadidentity(8)
 									end
 								end
 							else
