@@ -2235,7 +2235,21 @@ do
 
 			-- Check if ball is close to player for setting
 			local ballPart = ball.Ball
-			local ballPosition = ballPart:GetPivot().Position
+
+			local playerPing = LocalPlayer:GetNetworkPing()
+			local gravityMultiplier = ball.GravityMultiplier or 1
+			local acceleration = ball.Acceleration or Vector3.new(0, 0, 0)
+			local velocity = BallTrajectory.LastVelocity or ballPart.AssemblyLinearVelocity
+			local position = ballPart.Position
+			local GRAVITY = -GameModule.Physics.Gravity * gravityMultiplier
+
+			-- Calculate where the ball will be after the time of player's ping has passed
+			local t = playerPing
+			local ballPosition = Vector3.new(
+				position.X + velocity.X * t + 0.5 * acceleration.X * t * t,
+				position.Y + velocity.Y * t + 0.5 * (acceleration.Y + GRAVITY) * t * t,
+				position.Z + velocity.Z * t + 0.5 * acceleration.Z * t * t
+			)
 
 			local ballToPlayerDist = (ballPosition - playerPosition).Magnitude
 			local landingToPlayerDist = (landingPosition - playerPosition).Magnitude
@@ -3196,15 +3210,24 @@ do
 								continue
 							end
 
-							-- Check if ball is close to player for setting
-							local ballPart = ball.Ball
+							local playerPing = LocalPlayer:GetNetworkPing()
+							local gravityMultiplier = ball.GravityMultiplier or 1
+							local acceleration = ball.Acceleration or Vector3.new(0, 0, 0)
+							local ballPart = ball.Ball.PrimaryPart
+							local velocity = BallTrajectory.LastVelocity or ballPart.AssemblyLinearVelocity
+							local position = ballPart.Position
+							local GRAVITY = -GameModule.Physics.Gravity * gravityMultiplier
+
+							-- Calculate where the ball will be after the time of player's ping has passed
+							local t = playerPing
+							local ballPosition = Vector3.new(
+								position.X + velocity.X * t + 0.5 * acceleration.X * t * t,
+								position.Y + velocity.Y * t + 0.5 * (acceleration.Y + GRAVITY) * t * t,
+								position.Z + velocity.Z * t + 0.5 * acceleration.Z * t * t
+							)
 
 							local landingPosition = BallTrajectory.LastTrajectory
 							local timeToLand = BallTrajectory.LastTime
-
-							-- Check if ball or landing position is close enough to set
-							local ballPosition = ballPart:GetPivot().Position
-							local dir = (BallTrajectory.LastTrajectory - rootPart.Position).Unit
 
 							if ReplicatedStorage:GetAttribute("Gamemode") ~= "Training" then
 								if
