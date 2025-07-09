@@ -3164,6 +3164,10 @@ do
 								continue
 							end
 
+							if ReplicatedStorage:GetAttribute("LastHitter") == LocalPlayer.Name then
+								continue
+							end
+
 							local humanoid = character:FindFirstChild("Humanoid")
 							humanoid.AutoRotate = false
 
@@ -3258,43 +3262,22 @@ do
 										).Rotation
 
 									if os.clock() - blatantClock > 0.5 then
-										if ballPosition.Y - courtPosition.Y > 5 then
-											blatantClock = os.clock()
-											local args = {
-												{
-													Charge = 1,
-													Action = "Spike",
-													SpecialCharge = 1,
-													TiltDirection = Vector3.new(0, 1, 0),
-													BallId = ballPart:GetAttribute("ServerId"),
-													MoveDirection = Vector3.new(0, 0, 0),
-													From = "Client",
-													HitboxSize = spikeHitboxSize,
-													LookVector = (
-														CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
-														- rootPart.Position * Vector3.new(1, 0, 1)
-													).Unit,
-												},
-											}
-
-											interactRemote:InvokeServer(unpack(args))
-											continue
-										else
-											bump()
-										end
+										blatantClock = os.clock()
+										bump()
 									end
 								end
+							else
+								rootPart.CFrame = CFrame.new(rootPart.Position)
+									* CFrame.lookAt(
+										rootPart.Position * Vector3.new(1, 0, 1),
+										CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
+									).Rotation
+
+								humanoid.WalkToPoint = BallTrajectory.LastTrajectory * Vector3.new(1, 0, 1)
+									+ rootPart.Position * Vector3.new(0, 1, 0)
+
+								bump()
 							end
-
-							rootPart.CFrame = CFrame.new(rootPart.Position)
-								* CFrame.lookAt(
-									rootPart.Position * Vector3.new(1, 0, 1),
-									CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
-								).Rotation
-
-							humanoid.WalkToPoint = BallTrajectory.LastTrajectory * Vector3.new(1, 0, 1)
-								+ rootPart.Position * Vector3.new(0, 1, 0)
-							bump()
 						end
 					end))
 
