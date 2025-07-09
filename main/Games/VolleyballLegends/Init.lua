@@ -3263,9 +3263,40 @@ do
 
 									if os.clock() - blatantClock > 0.1 then
 										blatantClock = os.clock()
-										setthreadidentity(2)
-										gameController:DoMove("Bump")
-										setthreadidentity(8)
+
+										if ballPosition.Y - courtPosition.Y >= 10 then
+											blatantClock = os.clock()
+
+											setthreadidentity(2)
+											gameController:DoMove("Spike")
+											setthreadidentity(8)
+
+											--[[
+											local args = {
+												{
+													Charge = 1,
+													Action = "Spike",
+													SpecialCharge = 1,
+													TiltDirection = Vector3.new(0, 1, 0),
+													BallId = ballPart:GetAttribute("ServerId"),
+													MoveDirection = Vector3.new(0, 0, 0),
+													From = "Client",
+													HitboxSize = spikeHitboxSize,
+													LookVector = (
+														CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
+														- rootPart.Position * Vector3.new(1, 0, 1)
+													).Unit,
+												},
+											}
+
+											interactRemote:InvokeServer(unpack(args))
+											continue
+											]]
+										else
+											setthreadidentity(2)
+											gameController:DoMove("Bump")
+											setthreadidentity(8)
+										end
 									end
 								end
 							else
