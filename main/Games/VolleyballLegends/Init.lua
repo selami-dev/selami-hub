@@ -2240,7 +2240,7 @@ do
 			local gravityMultiplier = ball.GravityMultiplier or 1
 			local acceleration = ball.Acceleration or Vector3.new(0, 0, 0)
 			local velocity = BallTrajectory.LastVelocity or ballPart.AssemblyLinearVelocity
-			local position = ballPart.Position
+			local position = ballPart:GetPivot().Position
 			local GRAVITY = -GameModule.Physics.Gravity * gravityMultiplier
 
 			-- Calculate where the ball will be after the time of player's ping has passed
