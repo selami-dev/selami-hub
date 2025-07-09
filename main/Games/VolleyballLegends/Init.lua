@@ -3258,7 +3258,15 @@ do
 									rootPart.CFrame = CFrame.new(ballPosition)
 										* CFrame.lookAt(
 											ballPosition * Vector3.new(1, 0, 1),
-											CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
+											(
+												CourtPart.CFrame.Position
+												+ Vector3.new(
+													0,
+													0,
+													isPlayerOnPositiveZSide and -CourtPart.Size.Z / 2
+														or CourtPart.Size.Z / 2
+												)
+											) * Vector3.new(1, 0, 1)
 										).Rotation
 
 									if os.clock() - blatantClock > 0.1 then
@@ -3303,7 +3311,15 @@ do
 								rootPart.CFrame = CFrame.new(rootPart.Position)
 									* CFrame.lookAt(
 										rootPart.Position * Vector3.new(1, 0, 1),
-										CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
+										(
+											CourtPart.CFrame.Position
+											+ Vector3.new(
+												0,
+												0,
+												isPlayerOnPositiveZSide and -CourtPart.Size.Z / 2
+													or CourtPart.Size.Z / 2
+											)
+										) * Vector3.new(1, 0, 1)
 									).Rotation
 
 								humanoid.WalkToPoint = BallTrajectory.LastTrajectory * Vector3.new(1, 0, 1)
