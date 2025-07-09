@@ -3272,7 +3272,7 @@ do
 									if os.clock() - blatantClock > 0.1 then
 										blatantClock = os.clock()
 
-										if ballPosition.Y - courtPosition.Y >= 10 then
+										if ballPosition.Y - courtPosition.Y >= 12.5 then
 											blatantClock = os.clock()
 
 											setthreadidentity(2)
