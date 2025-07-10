@@ -3215,7 +3215,7 @@ do
 							local acceleration = ball.Acceleration or Vector3.new(0, 0, 0)
 							local ballPart = ball.Ball.PrimaryPart
 							local velocity = BallTrajectory.LastVelocity or ballPart.AssemblyLinearVelocity
-							local position = ballPart.Position
+							local position = ballPart and ballPart.Position or ball.Ball:GetPivot().Position
 							local GRAVITY = -GameModule.Physics.Gravity * gravityMultiplier
 
 							-- Calculate where the ball will be after the time of player's ping has passed
