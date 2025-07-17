@@ -2,6 +2,7 @@
 --	loadstring(game:HttpGet('https://gitlab.com/selamists/selamihub/-/raw/main/build/Games/VoleyballLegends.lua'))()
 
 -- AC BYPASS
+--[[
 do
 	local old
 	old = hookmetamethod(game, "__namecall", function(self, ...)
@@ -22,6 +23,7 @@ do
 		return old(self, ...)
 	end)
 end
+]]
 
 --print(SELAMI_HUB)
 local SELAMI_HUB = getgenv().SELAMI_HUB
