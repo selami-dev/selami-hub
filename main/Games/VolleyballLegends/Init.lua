@@ -2,15 +2,15 @@
 --	loadstring(game:HttpGet('https://gitlab.com/selamists/selamihub/-/raw/main/build/Games/VoleyballLegends.lua'))()
 
 -- AC BYPASS
---[[
 do
 	local old
 	old = hookmetamethod(game, "__namecall", function(self, ...)
 		local namecall = getnamecallmethod()
 		if
-			namecall == "InvokeServer"
+			not checkcaller()
+			and namecall == "InvokeServer"
 			and typeof(self) == "Instance"
-			and self:IsA("RemoteFunction")
+			and self.ClassName == "RemoteFunction"
 			and self.Name == "Check"
 		then
 			local args = table.pack(...)
@@ -23,7 +23,6 @@ do
 		return old(self, ...)
 	end)
 end
-]]
 
 --print(SELAMI_HUB)
 local SELAMI_HUB = getgenv().SELAMI_HUB
