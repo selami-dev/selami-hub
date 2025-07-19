@@ -2286,6 +2286,7 @@ do
 				position.Z + velocity.Z * t + 0.5 * acceleration.Z * t * t
 			)
 
+			local posToPlayerDist = (position - playerPosition).Magnitude
 			local ballToPlayerDist = (ballPosition - playerPosition).Magnitude
 			local landingToPlayerDist = (landingPosition - playerPosition).Magnitude
 			local setRange = 7 * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS["Set"] or 1)
@@ -2294,7 +2295,9 @@ do
 				SET_ENABLED
 				and (
 					(ballToPlayerDist <= setRange)
+					or (posToPlayerDist <= setRange)
 					or (timeToLand < 0.25 + 0.5 * LocalPlayer:GetNetworkPing() and landingToPlayerDist <= setRange)
+
 				)
 			then
 				-- Ball or landing position is close enough to set
