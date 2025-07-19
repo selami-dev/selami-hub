@@ -244,6 +244,7 @@ do
 	local RAY_LENGTH = 120
 	local ANGLE = 10
 	local AIR_CHECK = true
+	local TEAM_CHECK = true
 
 	local playerData = {}
 	local BrightColors = {
@@ -285,7 +286,7 @@ do
 			return
 		end
 
-		if not AIR_CHECK or inAir then
+		if (not TEAM_CHECK or player.Team ~= LocalPlayer.Team) and (not AIR_CHECK or inAir) then
 			local tiltAngle = math.rad(ANGLE)
 			local tiltedCFrame = rootPart.CFrame * CFrame.Angles(-tiltAngle, 0, 0)
 			local direction = tiltedCFrame.LookVector * RAY_LENGTH
@@ -389,6 +390,17 @@ do
 			Value = AIR_CHECK,
 			Callback = function(_, v)
 				AIR_CHECK = v
+			end,
+		})
+	)
+
+	ConfigHandler:AddElement(
+		"RayTeamCheckToggle",
+		RayConfigNode:Checkbox({
+			Label = "Team Check",
+			Value = TEAM_CHECK,
+			Callback = function(_, v)
+				TEAM_CHECK = v
 			end,
 		})
 	)
