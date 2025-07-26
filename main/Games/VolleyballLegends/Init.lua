@@ -24,6 +24,21 @@ do
 	end)
 end
 
+-- CONSOLE BYPASS
+if SELAMI_HUB.LaunchArgs.HideConsole then
+	getgenv().print = function(...)
+		return
+	end
+
+	getgenv().warn = function(...)
+		return
+	end
+
+	getgenv().error = function(...)
+		return
+	end
+end
+
 --print(SELAMI_HUB)
 local SELAMI_HUB = getgenv().SELAMI_HUB
 

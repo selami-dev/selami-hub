@@ -22,6 +22,7 @@ local function start(LAUNCH_ARGS)
 
 	SELAMI_HUB.ModuleLoader = MODULE_LOADER
 	SELAMI_HUB.Key = LAUNCH_ARGS.Key
+	SELAMI_HUB.LaunchArgs = LAUNCH_ARGS
 
 	local BaseScript, message = SELAMI_HUB.ModuleLoader:LoadFromPath("Base.lua")
 	if not BaseScript then
