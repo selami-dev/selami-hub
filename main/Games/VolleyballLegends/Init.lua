@@ -2333,7 +2333,7 @@ do
 
 			local playerPing = LocalPlayer:GetNetworkPing()
 			local gravityMultiplier = ball.GravityMultiplier or 1
-			local acceleration = ball.Acceleration or Vector3.new(0, 0, 0)
+			local ballAcceleration = ball.Acceleration or Vector3.new(0, 0, 0)
 			local velocity = BallTrajectory.LastVelocity or ballPart.AssemblyLinearVelocity
 			local position = ballPart:GetPivot().Position
 			local GRAVITY = -GameModule.Physics.Gravity * gravityMultiplier
@@ -2341,9 +2341,9 @@ do
 			-- Calculate where the ball will be after the time of player's ping has passed
 			local t = playerPing
 			local ballPosition = Vector3.new(
-				position.X + velocity.X * t + 0.5 * acceleration.X * t * t,
-				position.Y + velocity.Y * t + 0.5 * (acceleration.Y + GRAVITY) * t * t,
-				position.Z + velocity.Z * t + 0.5 * acceleration.Z * t * t
+				position.X + velocity.X * t + 0.5 * ballAcceleration.X * t * t,
+				position.Y + velocity.Y * t + 0.5 * (ballAcceleration.Y + GRAVITY) * t * t,
+				position.Z + velocity.Z * t + 0.5 * ballAcceleration.Z * t * t
 			)
 
 			--local posToPlayerDist = (position - playerPosition).Magnitude
@@ -2438,9 +2438,9 @@ do
 				end
 
 				local simBallPosition = Vector3.new(
-					position.X + velocity.X * t + 0.5 * acceleration.X * t * t,
-					position.Y + velocity.Y * t + 0.5 * (acceleration.Y + GRAVITY) * t * t,
-					position.Z + velocity.Z * t + 0.5 * acceleration.Z * t * t
+					position.X + velocity.X * t + 0.5 * ballAcceleration.X * t * t,
+					position.Y + velocity.Y * t + 0.5 * (ballAcceleration.Y + GRAVITY) * t * t,
+					position.Z + velocity.Z * t + 0.5 * ballAcceleration.Z * t * t
 				)
 
 				-- Get simulated hitbox for Dive at simPlayerPos
