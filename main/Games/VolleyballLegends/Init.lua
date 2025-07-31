@@ -2002,7 +2002,7 @@ do
 			local args = { ... }
 			if
 				ENABLED
-				and not checkcaller()
+				--and not checkcaller()
 				and rawequal(self, workspace)
 				and getnamecallmethod() == "GetPartsInPart"
 				and lastHitboxName
@@ -2087,6 +2087,51 @@ do
         end
         ]]
 	--
+
+	local function isBallInBox(ballPosition, ballRadius, boxCFrame, boxSize)
+		-- Convert ball position to box's local space
+		local localBallPos = boxCFrame:PointToObjectSpace(ballPosition)
+
+		-- Get half extents of the box
+		local halfSize = boxSize * 0.5
+
+		-- Find the closest point on the box to the ball center
+		local closestX = math.clamp(localBallPos.X, -halfSize.X, halfSize.X)
+		local closestY = math.clamp(localBallPos.Y, -halfSize.Y, halfSize.Y)
+		local closestZ = math.clamp(localBallPos.Z, -halfSize.Z, halfSize.Z)
+
+		local closestPoint = Vector3.new(closestX, closestY, closestZ)
+
+		-- Calculate distance from ball center to closest point
+		local distance = (localBallPos - closestPoint).Magnitude
+
+		-- Ball is inside/intersecting if distance is less than or equal to radius
+		return distance <= ballRadius
+	end
+
+	local hitboxFolder = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Hitboxes")
+	local function getHitboxCFrame(hitboxName, CFrame)
+		local folder = hitboxFolder:WaitForChild(hitboxName)
+		local hitboxPart = folder:WaitForChild("Part")
+		local dummy = folder:WaitForChild("Dummy") :: Model
+
+		local offset = dummy:GetPivot():ToObjectSpace(hitboxPart:GetPivot())
+
+		if CFrame then
+			return CFrame:ToWorldSpace(offset),
+				hitboxPart.Size * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS[hitboxName] or 1)
+		else
+			local character = LocalPlayer.Character
+			if not character then
+				return
+			end
+
+			return character:GetPivot():ToWorldSpace(offset),
+				hitboxPart.Size * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS[hitboxName] or 1)
+		end
+	end
+
+	local HitboxesFolder = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Hitboxes")
 
 	-- Auto Receive (Dive, Set)
 	local specialController = require(ReplicatedFirst:WaitForChild("Controllers"):WaitForChild("SpecialController"))
@@ -2301,18 +2346,22 @@ do
 				position.Z + velocity.Z * t + 0.5 * acceleration.Z * t * t
 			)
 
-			local posToPlayerDist = (position - playerPosition).Magnitude
+			--local posToPlayerDist = (position - playerPosition).Magnitude
 			local ballToPlayerDist = (ballPosition - playerPosition).Magnitude
-			local landingToPlayerDist = (landingPosition - playerPosition).Magnitude
+			--local landingToPlayerDist = (landingPosition - playerPosition).Magnitude
 			local setRange = 7 * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS["Set"] or 1)
+
+			local setHitboxCFrame, setHitboxSize = getHitboxCFrame("Set")
 
 			if
 				SET_ENABLED
 				and (
-					(ballToPlayerDist <= setRange)
-					or (posToPlayerDist <= setRange)
-					or (timeToLand < 0.25 + 0.5 * LocalPlayer:GetNetworkPing() and landingToPlayerDist <= setRange)
-
+					(isBallInBox(ballPosition, GameModule.Physics.Radius, setHitboxCFrame, setHitboxSize))
+					or (isBallInBox(position, GameModule.Physics.Radius, setHitboxCFrame, setHitboxSize))
+					or (
+						timeToLand < 0.25 + 0.5 * LocalPlayer:GetNetworkPing()
+						and isBallInBox(landingPosition, GameModule.Physics.Radius, setHitboxCFrame, setHitboxSize)
+					)
 				)
 			then
 				-- Ball or landing position is close enough to set
@@ -2365,7 +2414,58 @@ do
 			local diffVector = (landingPosition - playerPosition) * Vector3.new(1, 0, 1)
 			local distance = diffVector.Magnitude
 
-			-- Adjust distance based on hitbox multiplier
+			--{{ NEW LOGIC }}
+			-- Simulate possible dive timings up to 1 second ahead, at most 60 steps per second
+			local found = false
+			local now = os.clock()
+			local maxSimTime = math.max(0, timeToLand) -- don't simulate past the ball's landing
+			local steps = 60 * timeToLand
+			local dt = maxSimTime / steps
+
+			for i = 0, steps - 1 do
+				local t = i * dt
+
+				-- Player's simulated position after simTime seconds of diving
+				local diveDir = diffVector.Unit
+				local simPlayerPos = playerPosition
+
+				-- Only move if t > 0
+				if t > 0 then
+					-- s = v0*t + 0.5*a*t^2
+					local moveDist = initialVelocity * t + 0.5 * acceleration * t * t
+					moveDist = math.max(0, moveDist)
+					simPlayerPos = playerPosition + diveDir * moveDist
+				end
+
+				local simBallPosition = Vector3.new(
+					position.X + velocity.X * t + 0.5 * acceleration.X * t * t,
+					position.Y + velocity.Y * t + 0.5 * (acceleration.Y + GRAVITY) * t * t,
+					position.Z + velocity.Z * t + 0.5 * acceleration.Z * t * t
+				)
+
+				-- Get simulated hitbox for Dive at simPlayerPos
+				local hitboxCFrame, hitboxSize =
+					getHitboxCFrame("Dive", CFrame.new(simPlayerPos) * character:GetPivot().Rotation)
+				if hitboxCFrame and hitboxSize then
+					if isBallInBox(simBallPosition, GameModule.Physics.Radius, hitboxCFrame, hitboxSize) then
+						-- Ball will be in hitbox if we dive at t seconds from now
+						--setthreadidentity(2)
+						moveDirectionOverride = diveDir
+						gameController:Dive()
+						setthreadidentity(8)
+						moveDirectionOverride = nil
+						found = true
+						break
+					end
+				end
+			end
+
+			if found then
+				return
+			end
+
+			--[[
+						-- Adjust distance based on hitbox multiplier
 			local hitboxDistance = distance - (1.5 * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS["Dive"] or 1))
 			hitboxDistance = math.max(0, hitboxDistance)
 
@@ -2392,6 +2492,7 @@ do
 			gameController:Dive()
 			setthreadidentity(8)
 			moveDirectionOverride = nil
+			]]
 		end))
 
 		local AutoReceiveNode = InternalTab:TreeNode({
