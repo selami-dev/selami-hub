@@ -2417,9 +2417,15 @@ do
 			--{{ NEW LOGIC }}
 			-- Simulate possible dive timings up to 1 second ahead, at most 60 steps per second
 			local found = false
-			local now = os.clock()
 			local maxSimTime = math.max(0, timeToLand) -- don't simulate past the ball's landing
-			local steps = 60 * timeToLand
+
+			if USER_REACTION_TIME_ENABLED then
+				maxSimTime = math.min(USER_REACTION_TIME - deltaClock, maxSimTime)
+			end
+
+			maxSimTime = math.min(maxSimTime, GameConfig.Ball.Dive.Duration)
+
+			local steps = 60 * maxSimTime
 			local dt = maxSimTime / steps
 
 			for i = 0, steps - 1 do
