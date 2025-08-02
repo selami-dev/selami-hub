@@ -3523,7 +3523,7 @@ do
 													position.Z + velocity.Z * t + 0.5 * acceleration.Z * t * t
 												)
 												-- Place player slightly behind the net on their side
-												local offset = isPlayerOnPositiveZSide and -2 or 2
+												local offset = isPlayerOnPositiveZSide and 2 or -2
 												local playerTargetPos =
 													Vector3.new(predictedPos.X, predictedPos.Y, netWorldZ + offset)
 												rootPart.CFrame = CFrame.new(playerTargetPos)
