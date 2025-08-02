@@ -2274,7 +2274,7 @@ do
 
 			local deltaClock = os.clock() - hitClock
 			if
-				(REACTION_TIME_ENABLED and deltaClock + LocalPlayer:GetNetworkPing() * 0.5 < REACTION_TIME)
+				(REACTION_TIME_ENABLED and deltaClock < REACTION_TIME)
 				or (USER_REACTION_TIME_ENABLED and deltaClock > USER_REACTION_TIME + LocalPlayer:GetNetworkPing())
 			then
 				return
@@ -3226,6 +3226,7 @@ do
 	local AutoFarmConfig = {
 		Enabled = false,
 		Blatant = true,
+		AccountFarmingMode = true,
 	}
 
 	local jan = Janitor.new()
@@ -3489,6 +3490,20 @@ do
 											setthreadidentity(8)
 										end
 									end
+								else
+									rootPart.CFrame = CFrame.new(landingPosition)
+										* CFrame.lookAt(
+											landingPosition * Vector3.new(1, 0, 1),
+											(
+												CourtPart.CFrame.Position
+												+ Vector3.new(
+													0,
+													0,
+													isPlayerOnPositiveZSide and -CourtPart.Size.Z / 2
+														or CourtPart.Size.Z / 2
+												)
+											) * Vector3.new(1, 0, 1)
+										).Rotation
 								end
 							else
 								rootPart.CFrame = CFrame.new(rootPart.Position)
