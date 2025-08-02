@@ -3509,13 +3509,19 @@ do
 										then
 											-- Calculate time to reach the net plane (Z = netWorldZ)
 											local t = (netWorldZ - ballZ) / ballVZ
-											if t > 0 then
+											if t > 0 and t < timeToLand then
 												-- Predict ball position at that time (ignoring gravity for simplicity)
-												local predictedPos = ballPos + ballVel * t
+												local predictedPos = Vector3.new(
+													position.X + velocity.X * t + 0.5 * acceleration.X * t * t,
+													position.Y
+														+ velocity.Y * t
+														+ 0.5 * (acceleration.Y + GRAVITY) * t * t,
+													position.Z + velocity.Z * t + 0.5 * acceleration.Z * t * t
+												)
 												-- Place player slightly behind the net on their side
 												local offset = isPlayerOnPositiveZSide and -2 or 2
 												local playerTargetPos =
-													Vector3.new(predictedPos.X, rootPart.Position.Y, netWorldZ + offset)
+													Vector3.new(predictedPos.X, predictedPos.Y, netWorldZ + offset)
 												rootPart.CFrame = CFrame.new(playerTargetPos)
 													* CFrame.lookAt(
 														playerTargetPos * Vector3.new(1, 0, 1),
