@@ -3556,10 +3556,9 @@ do
 													).Rotation
 											end
 										else
-											-- Fallback: just go to landingPosition
-											rootPart.CFrame = CFrame.new(landingPosition)
+											rootPart.CFrame = CFrame.new(centerPosition + Vector3.new(0, 2, 0))
 												* CFrame.lookAt(
-													landingPosition * Vector3.new(1, 0, 1),
+													centerPosition * Vector3.new(1, 0, 1),
 													(
 														CourtPart.CFrame.Position
 														+ Vector3.new(
