@@ -2675,7 +2675,10 @@ do
 			wait()
 			TeleportService:Teleport(PlaceId, Players.LocalPlayer)
 		else
-			TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
+			while task.wait(5) do
+				TeleportService:Teleport(PlaceId, Players.LocalPlayer)
+			end
+			--TeleportService:TeleportToPlaceInstance(PlaceId, JobId, Players.LocalPlayer)
 		end
 	end
 
