@@ -717,7 +717,7 @@ local rarityModule = require(ReplicatedStorage.Content.Rarity)
 local function colorFromRarity(rarity)
 	return rarityModule.Data[rarity].Color
 end
-
+--[[
 do
 	local CosmeticsTab = Window:CollapsingHeader({
 		Title = "✨ Cosmetics",
@@ -1108,6 +1108,7 @@ do
 		end)
 	end
 end
+]]
 
 local currentCam = workspace.CurrentCamera
 if currentCam then
