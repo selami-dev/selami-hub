@@ -3491,19 +3491,77 @@ do
 										end
 									end
 								else
-									rootPart.CFrame = CFrame.new(landingPosition)
-										* CFrame.lookAt(
-											landingPosition * Vector3.new(1, 0, 1),
-											(
-												CourtPart.CFrame.Position
-												+ Vector3.new(
-													0,
-													0,
-													isPlayerOnPositiveZSide and -CourtPart.Size.Z / 2
-														or CourtPart.Size.Z / 2
-												)
-											) * Vector3.new(1, 0, 1)
-										).Rotation
+									-- Teleport player to where the ball would be right after it passed the net
+									do
+										-- Assume the net is at Z = 0 in court local space, adjust as needed
+										local ballVel = velocity
+										local ballPos = position
+										local ballZ = ballPos.Z
+										local ballVZ = ballVel.Z
+
+										-- Find the Z position of the net in world space
+										local netWorldZ = CourtPart.CFrame.Position.Z
+
+										-- Only proceed if the ball is moving toward the player's side
+										if
+											(isPlayerOnPositiveZSide and ballVZ < 0)
+											or (not isPlayerOnPositiveZSide and ballVZ > 0)
+										then
+											-- Calculate time to reach the net plane (Z = netWorldZ)
+											local t = (netWorldZ - ballZ) / ballVZ
+											if t > 0 then
+												-- Predict ball position at that time (ignoring gravity for simplicity)
+												local predictedPos = ballPos + ballVel * t
+												-- Place player slightly behind the net on their side
+												local offset = isPlayerOnPositiveZSide and -2 or 2
+												local playerTargetPos =
+													Vector3.new(predictedPos.X, rootPart.Position.Y, netWorldZ + offset)
+												rootPart.CFrame = CFrame.new(playerTargetPos)
+													* CFrame.lookAt(
+														playerTargetPos * Vector3.new(1, 0, 1),
+														(
+															CourtPart.CFrame.Position
+															+ Vector3.new(
+																0,
+																0,
+																isPlayerOnPositiveZSide and -CourtPart.Size.Z / 2
+																	or CourtPart.Size.Z / 2
+															)
+														) * Vector3.new(1, 0, 1)
+													).Rotation
+											else
+												-- Fallback: just go to landingPosition
+												rootPart.CFrame = CFrame.new(landingPosition)
+													* CFrame.lookAt(
+														landingPosition * Vector3.new(1, 0, 1),
+														(
+															CourtPart.CFrame.Position
+															+ Vector3.new(
+																0,
+																0,
+																isPlayerOnPositiveZSide and -CourtPart.Size.Z / 2
+																	or CourtPart.Size.Z / 2
+															)
+														) * Vector3.new(1, 0, 1)
+													).Rotation
+											end
+										else
+											-- Fallback: just go to landingPosition
+											rootPart.CFrame = CFrame.new(landingPosition)
+												* CFrame.lookAt(
+													landingPosition * Vector3.new(1, 0, 1),
+													(
+														CourtPart.CFrame.Position
+														+ Vector3.new(
+															0,
+															0,
+															isPlayerOnPositiveZSide and -CourtPart.Size.Z / 2
+																or CourtPart.Size.Z / 2
+														)
+													) * Vector3.new(1, 0, 1)
+												).Rotation
+										end
+									end
 								end
 							else
 								rootPart.CFrame = CFrame.new(rootPart.Position)
