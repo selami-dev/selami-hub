@@ -3493,6 +3493,8 @@ do
 								else
 									-- Teleport player to where the ball would be right after it passed the net
 									do
+										warn("STEP 1 TYPE")
+
 										-- Assume the net is at Z = 0 in court local space, adjust as needed
 										local ballVel = velocity
 										local ballPos = position
@@ -3504,12 +3506,14 @@ do
 
 										-- Only proceed if the ball is moving toward the player's side
 										if
-											(isPlayerOnPositiveZSide and ballVZ < 0)
-											or (not isPlayerOnPositiveZSide and ballVZ > 0)
+											(isPlayerOnPositiveZSide and ballVZ > 0)
+											or (not isPlayerOnPositiveZSide and ballVZ < 0)
 										then
+											warn("STEP 2 TYPE")
 											-- Calculate time to reach the net plane (Z = netWorldZ)
 											local t = (netWorldZ - ballZ) / ballVZ
 											if t > 0 and t < timeToLand then
+												warn("STEP 3 TYPE")
 												-- Predict ball position at that time (ignoring gravity for simplicity)
 												local predictedPos = Vector3.new(
 													position.X + velocity.X * t + 0.5 * acceleration.X * t * t,
