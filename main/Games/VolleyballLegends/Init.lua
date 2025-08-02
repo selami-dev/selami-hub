@@ -1,3 +1,5 @@
+task.wait(1)
+
 -->> LDSTN
 --	loadstring(game:HttpGet('https://gitlab.com/selamists/selamihub/-/raw/main/build/Games/VoleyballLegends.lua'))()
 
