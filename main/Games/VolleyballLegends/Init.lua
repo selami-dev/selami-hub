@@ -3348,10 +3348,6 @@ do
 								continue
 							end
 
-							if ReplicatedStorage:GetAttribute("LastHitter") == LocalPlayer.Name then
-								continue
-							end
-
 							local humanoid = character:FindFirstChild("Humanoid")
 							humanoid.AutoRotate = false
 
@@ -3448,6 +3444,23 @@ do
 
 							if AutoFarmConfig.Blatant then
 								if isBallOnPlayersSide then
+									if ReplicatedStorage:GetAttribute("LastHitter") == LocalPlayer.Name then
+										rootPart.CFrame = CFrame.new(centerPosition + Vector3.new(0, 6, 0))
+											* CFrame.lookAt(
+												centerPosition * Vector3.new(1, 0, 1),
+												(
+													CourtPart.CFrame.Position
+													+ Vector3.new(
+														0,
+														0,
+														isPlayerOnPositiveZSide and -CourtPart.Size.Z / 2
+															or CourtPart.Size.Z / 2
+													)
+												) * Vector3.new(1, 0, 1)
+											).Rotation
+										continue
+									end
+
 									rootPart.CFrame = CFrame.new(ballPosition)
 										* CFrame.lookAt(
 											ballPosition * Vector3.new(1, 0, 1),
@@ -3462,7 +3475,7 @@ do
 											) * Vector3.new(1, 0, 1)
 										).Rotation
 
-									if os.clock() - blatantClock > 0.1 then
+									if os.clock() - blatantClock > 0.05 then
 										blatantClock = os.clock()
 
 										if ballPosition.Y - courtPosition.Y >= 12.5 then
@@ -3595,6 +3608,10 @@ do
 											)
 										) * Vector3.new(1, 0, 1)
 									).Rotation
+
+								if ReplicatedStorage:GetAttribute("LastHitter") == LocalPlayer.Name then
+									continue
+								end
 
 								humanoid.WalkToPoint = BallTrajectory.LastTrajectory * Vector3.new(1, 0, 1)
 									+ rootPart.Position * Vector3.new(0, 1, 0)
