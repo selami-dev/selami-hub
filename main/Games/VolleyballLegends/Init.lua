@@ -2234,6 +2234,10 @@ do
 		)
 
 		hooks:Add(RunService.Heartbeat:Connect(function()
+			if not LocalPlayer.Team then
+				return
+			end
+
 			local ball, landingPosition, timeToLand =
 				BallTrajectory.LastBall, BallTrajectory.LastTrajectory, BallTrajectory.LastTime
 			latestDiveDir = getMoveDirectionToLanding(landingPosition)
@@ -2320,7 +2324,7 @@ do
 				end
 
 				-- Determine which side of the court the player is on (using Z axis)
-				local isPlayerOnPositiveZSide = playerPosition.Z > courtPosition.Z
+				local isPlayerOnPositiveZSide = LocalPlayer.Team.Index == 2
 
 				-- Check if landing position is on the same side as the player
 				local isLandingOnPlayersSide = (isPlayerOnPositiveZSide and landingPosition.Z > courtPosition.Z)
@@ -3317,6 +3321,10 @@ do
 					-->> autoplay
 					inroundJan:Add(task.defer(function()
 						while RunService.Heartbeat:Wait() do
+							if not LocalPlayer.Team then
+								continue
+							end
+
 							if LocalPlayer:GetAttribute("IsServing") then
 								local args = {
 									Vector3.new(0, 0, 0),
@@ -3359,7 +3367,7 @@ do
 							local courtSize = CourtPart.Size
 
 							-- Determine which side of the court the player is on (using Z axis)
-							local isPlayerOnPositiveZSide = playerPosition.Z > courtPosition.Z
+							local isPlayerOnPositiveZSide = LocalPlayer.Team.Index == 2
 
 							-- Calculate center position of player's side of court
 							local centerX = courtPosition.X
@@ -3475,7 +3483,7 @@ do
 											) * Vector3.new(1, 0, 1)
 										).Rotation
 
-									if os.clock() - blatantClock > 0.05 then
+									if os.clock() - blatantClock > 0.1 then
 										blatantClock = os.clock()
 
 										if ballPosition.Y - courtPosition.Y >= 12.5 then
