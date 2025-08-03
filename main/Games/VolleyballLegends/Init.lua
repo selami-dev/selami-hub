@@ -2324,7 +2324,7 @@ do
 				end
 
 				-- Determine which side of the court the player is on (using Z axis)
-				local isPlayerOnPositiveZSide = LocalPlayer.Team.Index == 2
+				local isPlayerOnPositiveZSide = tonumber(LocalPlayer.Team:GetAttribute("Index")) == 2
 
 				-- Check if landing position is on the same side as the player
 				local isLandingOnPlayersSide = (isPlayerOnPositiveZSide and landingPosition.Z > courtPosition.Z)
@@ -3367,7 +3367,7 @@ do
 							local courtSize = CourtPart.Size
 
 							-- Determine which side of the court the player is on (using Z axis)
-							local isPlayerOnPositiveZSide = LocalPlayer.Team.Index == 2
+							local isPlayerOnPositiveZSide = tonumber(LocalPlayer.Team:GetAttribute("Index")) == 2
 
 							-- Calculate center position of player's side of court
 							local centerX = courtPosition.X
