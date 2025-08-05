@@ -24,6 +24,21 @@ local function start(LAUNCH_ARGS)
 	SELAMI_HUB.Key = LAUNCH_ARGS.Key
 	SELAMI_HUB.LaunchArgs = LAUNCH_ARGS
 
+	-- CONSOLE BYPASS
+	if SELAMI_HUB.LaunchArgs.HideConsole then
+		getgenv().print = function(...)
+			return
+		end
+
+		getgenv().warn = function(...)
+			return
+		end
+
+		getgenv().error = function(...)
+			return
+		end
+	end
+
 	local BaseScript, message = SELAMI_HUB.ModuleLoader:LoadFromPath("Base.lua")
 	if not BaseScript then
 		return game:GetService("Players").LocalPlayer:Kick(message)

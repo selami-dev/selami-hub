@@ -26,21 +26,6 @@ do
 	end)
 end
 
--- CONSOLE BYPASS
-if SELAMI_HUB.LaunchArgs.HideConsole then
-	getgenv().print = function(...)
-		return
-	end
-
-	getgenv().warn = function(...)
-		return
-	end
-
-	getgenv().error = function(...)
-		return
-	end
-end
-
 --print(SELAMI_HUB)
 local SELAMI_HUB = getgenv().SELAMI_HUB
 
@@ -2676,6 +2661,24 @@ do
 			:InvokeServer(unpack(args))
 	end
 
+	local function unRollback()
+		local args = {
+			nil,
+			true,
+			"Q\255",
+		}
+		game:GetService("ReplicatedStorage")
+			:WaitForChild("Packages")
+			:WaitForChild("_Index")
+			:WaitForChild("sleitnick_knit@1.7.0")
+			:WaitForChild("knit")
+			:WaitForChild("Services")
+			:WaitForChild("SettingsService")
+			:WaitForChild("RF")
+			:WaitForChild("UpdateKeybind")
+			:InvokeServer(unpack(args))
+	end
+
 	local function rejoin()
 		if #Players:GetPlayers() <= 1 then
 			Players.LocalPlayer:Kick("\nRejoining...")
@@ -2807,6 +2810,11 @@ do
 	manualHeader:Button({
 		Text = "Rollback",
 		Callback = rollback,
+	})
+
+	manualHeader:Button({
+		Text = "Un-Rollback",
+		Callback = unRollback,
 	})
 
 	manualHeader:Button({
