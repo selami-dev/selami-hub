@@ -149,8 +149,6 @@ if hookfunction and newcclosure then
 		local floorY = CourtPart.Position.Y + GameModule.Physics.Radius
 		local GRAVITY = -GameModule.Physics.Gravity * gravityMultiplier
 
-		warn(acceleration, GRAVITY)
-
 		local a, b, c = 0.5 * GRAVITY, velocity.Y, position.Y - floorY
 		local timeToHit = solveQuadratic(a, b, c)
 
