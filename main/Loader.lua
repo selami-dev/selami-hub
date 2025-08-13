@@ -11,6 +11,13 @@
 ]]
 
 local function start(LAUNCH_ARGS)
+	-- CONSOLE BYPASS
+	if LAUNCH_ARGS and LAUNCH_ARGS.HideConsole then
+		hookfunction(print, function() end)
+		hookfunction(warn, function() end)
+		hookfunction(error, function() end)
+	end
+
 	local MODULE_LOADER = loadstring(
 		game:HttpGet(
 			"https://raw.githubusercontent.com/selami-dev/selami-hub/refs/heads/main/main/Util/ModuleLoader.lua"

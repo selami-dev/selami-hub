@@ -146,10 +146,10 @@ if hookfunction and newcclosure then
 		local acceleration = ball.Acceleration or Vector3.new(0, 0, 0)
 		local ballPart = ball.Ball.PrimaryPart
 		local velocity, position = velocity or ballPart.AssemblyLinearVelocity, ballPart.Position
-		local floorY = CourtPart.Position.Y + GameModule.Physics.Radius
+		local floorY = CourtPart.Position.Y + CourtPart.Size.Y * 0.5 + GameModule.Physics.Radius
 		local GRAVITY = -GameModule.Physics.Gravity * gravityMultiplier
 
-		warn(acceleration, GRAVITY)
+		--warn(acceleration, GRAVITY)
 
 		local a, b, c = 0.5 * GRAVITY, velocity.Y, position.Y - floorY
 		local timeToHit = solveQuadratic(a, b, c)
@@ -645,7 +645,7 @@ do
 		local gameValue = LocalPlayer:GetAttribute(attributeName)
 		hooks:Add(LocalPlayer:GetAttributeChangedSignal(name):Connect(function()
 			gameValue = LocalPlayer:GetAttribute(name)
-			warn("Aight?")
+			--		warn("Aight?")
 			defaultText:Destroy()
 			defaultText = row:Label({
 				Text = "default: " .. gameValue,
@@ -2195,7 +2195,7 @@ do
 					and #{ ... } == 0
 					and rawequal(debug.info(3, "n"), "Dive")
 				then
-					warn("overriding")
+					--warn("overriding")
 					if moveDirectionOverride then
 						return moveDirectionOverride
 					elseif PERFECT_DIVE_ENABLED and lastHitter and lastHitter ~= LocalPlayer.Name then
@@ -2287,7 +2287,8 @@ do
 				end
 
 				local courtPosition = CourtPart.Position
-				local courtSize = CourtPart.Size * Vector3.new(1.05, 1, 1.05)
+				local courtSize = CourtPart.Size
+				local ballRadius = GameModule.Physics.Radius
 
 				-- Check if the last hitter is not on the same team as the player
 				local lastHitterPlayer = lastHitter and Players:FindFirstChild(lastHitter) or nil
@@ -2297,15 +2298,15 @@ do
 				end
 
 				if
-					landingPosition.X <= courtPosition.X - courtSize.X / 2
-					or landingPosition.X >= courtPosition.X + courtSize.X / 2
+					landingPosition.X < (courtPosition.X - courtSize.X / 2 - ballRadius)
+					or landingPosition.X > (courtPosition.X + courtSize.X / 2 + ballRadius)
 				then
 					return
 				end
-				-- Check if landing position is within court boundaries on Z axis
+				-- Check if landing position is within court boundaries on Z axis (with radius)
 				if
-					landingPosition.Z <= courtPosition.Z - courtSize.Z / 2
-					or landingPosition.Z >= courtPosition.Z + courtSize.Z / 2
+					landingPosition.Z < (courtPosition.Z - courtSize.Z / 2 - ballRadius)
+					or landingPosition.Z > (courtPosition.Z + courtSize.Z / 2 + ballRadius)
 				then
 					return
 				end
@@ -3533,7 +3534,7 @@ do
 								else
 									-- Teleport player to where the ball would be right after it passed the net
 									do
-										warn("STEP 1 TYPE")
+										--warn("STEP 1 TYPE")
 
 										-- Assume the net is at Z = 0 in court local space, adjust as needed
 										local ballVel = velocity
@@ -3549,11 +3550,11 @@ do
 											(isPlayerOnPositiveZSide and ballVZ > 0)
 											or (not isPlayerOnPositiveZSide and ballVZ < 0)
 										then
-											warn("STEP 2 TYPE")
+											--warn("STEP 2 TYPE")
 											-- Calculate time to reach the net plane (Z = netWorldZ)
 											local t = (netWorldZ - ballZ) / ballVZ
 											if t > 0 and t < timeToLand then
-												warn("STEP 3 TYPE")
+												--warn("STEP 3 TYPE")
 												-- Predict ball position at that time (ignoring gravity for simplicity)
 												local predictedPos = Vector3.new(
 													position.X + velocity.X * t + 0.5 * acceleration.X * t * t,
