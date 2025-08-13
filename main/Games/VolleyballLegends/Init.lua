@@ -127,6 +127,343 @@ local function solveQuadratic(a, b, c)
 	return nil
 end
 
+local function zapModule()
+	local v1 = game:GetService("ReplicatedStorage")
+	local v2 = game:GetService("RunService")
+	local u3 = nil
+	local u4 = nil
+	local u5 = nil
+	local u6 = nil
+	local _ = nil
+	local u7 = nil
+	local u8 = nil
+	local u9 = nil
+	local u10 = nil
+	local _ = {
+		CFrame.Angles(0, 0, 0),
+		CFrame.Angles(1.5707963267948966, 0, 0),
+		CFrame.Angles(0, 3.141592653589793, 3.141592653589793),
+		CFrame.Angles(-1.5707963267948966, 0, 0),
+		CFrame.Angles(0, 3.141592653589793, 1.5707963267948966),
+		CFrame.Angles(0, 1.5707963267948966, 1.5707963267948966),
+		CFrame.Angles(0, 0, 1.5707963267948966),
+		CFrame.Angles(0, -1.5707963267948966, 1.5707963267948966),
+		CFrame.Angles(-1.5707963267948966, -1.5707963267948966, 0),
+		CFrame.Angles(0, -1.5707963267948966, 0),
+		CFrame.Angles(1.5707963267948966, -1.5707963267948966, 0),
+		CFrame.Angles(0, 1.5707963267948966, 3.141592653589793),
+		CFrame.Angles(0, -1.5707963267948966, 3.141592653589793),
+		CFrame.Angles(0, 3.141592653589793, 0),
+		CFrame.Angles(-1.5707963267948966, -3.141592653589793, 0),
+		CFrame.Angles(0, 0, 3.141592653589793),
+		CFrame.Angles(1.5707963267948966, 3.141592653589793, 0),
+		CFrame.Angles(0, 0, -1.5707963267948966),
+		CFrame.Angles(0, -1.5707963267948966, -1.5707963267948966),
+		CFrame.Angles(0, -3.141592653589793, -1.5707963267948966),
+		CFrame.Angles(0, 1.5707963267948966, -1.5707963267948966),
+		CFrame.Angles(1.5707963267948966, 1.5707963267948966, 0),
+		CFrame.Angles(0, 1.5707963267948966, 0),
+		CFrame.Angles(-1.5707963267948966, 1.5707963267948966, 0),
+	}
+	u3 = buffer.create(64)
+	u4 = 0
+	u5 = 64
+	u6 = {}
+	if not v2:IsRunning() then
+		local function v11() --[[Anonymous function at line 106]]
+		end
+		local v12 = table.freeze
+		local v13 = {
+			["SendEvents"] = v11,
+			["BallStream"] = table.freeze({
+				["SetCallback"] = v11,
+			}),
+		}
+		return v12(v13)
+	end
+	if v2:IsServer() then
+		error("Cannot use the client module on the server!")
+	end
+	local v14 = v1:WaitForChild("ZAP")
+	local u15 = v14:WaitForChild("ZAP_RELIABLE")
+	local v16 = v14:WaitForChild("ZAP_UNRELIABLE")
+	local v17 = u15:IsA("RemoteEvent")
+	assert(v17, "Expected ZAP_RELIABLE to be a RemoteEvent")
+	local v18 = v16:IsA("UnreliableRemoteEvent")
+	assert(v18, "Expected ZAP_UNRELIABLE to be an UnreliableRemoteEvent")
+	local function v20() --[[Anonymous function at line 124]]
+		--[[
+    Upvalues:
+        [1] = u4
+        [2] = u3
+        [3] = u15
+        [4] = u6
+        [5] = u5
+    --]]
+		if u4 ~= 0 then
+			local v19 = buffer.create(u4)
+			buffer.copy(v19, 0, u3, 0, u4)
+			u15:FireServer(v19, u6)
+			u3 = buffer.create(64)
+			u4 = 0
+			u5 = 64
+			table.clear(u6)
+		end
+	end
+	v2.Heartbeat:Connect(v20)
+	local u21 = table.create(1)
+	local u22 = table.create(1)
+	u22[1] = {}
+	u15.OnClientEvent:Connect(function(p23, p24) --[[Anonymous function at line 143]]
+		--[[
+    Upvalues:
+        [1] = u7
+        [2] = u9
+        [3] = u8
+        [4] = u10
+        [5] = u21
+        [6] = u22
+    --]]
+		u7 = p23
+		u9 = p24
+		u8 = 0
+		u10 = 0
+		local v25 = buffer.len(p23)
+		while u8 < v25 do
+			local v26 = u8
+			u8 = u8 + 1
+			if buffer.readu8(p23, v26) == 1 then
+				local v27 = {}
+				local v28 = u7
+				local v29 = u8
+				u8 = u8 + 4
+				local v30 = buffer.readf32(v28, v29)
+				local v31 = u7
+				local v32 = u8
+				u8 = u8 + 4
+				local v33 = buffer.readf32(v31, v32)
+				local v34 = u7
+				local v35 = u8
+				u8 = u8 + 4
+				local v36 = buffer.readf32(v34, v35)
+				local v37 = Vector3.new(v30, v33, v36)
+				local v38 = u7
+				local v39 = u8
+				u8 = u8 + 4
+				local v40 = buffer.readf32(v38, v39)
+				local v41 = u7
+				local v42 = u8
+				u8 = u8 + 4
+				local v43 = buffer.readf32(v41, v42)
+				local v44 = u7
+				local v45 = u8
+				u8 = u8 + 4
+				local v46 = buffer.readf32(v44, v45)
+				local v47 = Vector3.new(v40, v43, v46)
+				local v48 = v47.Magnitude
+				if v48 == 0 then
+					v27.cframe = CFrame.new(v37)
+				else
+					v27.cframe = CFrame.fromAxisAngle(v47, v48) + v37
+				end
+				local v49 = u7
+				local v50 = u8
+				u8 = u8 + 4
+				local v51 = buffer.readf32(v49, v50)
+				local v52 = u7
+				local v53 = u8
+				u8 = u8 + 4
+				local v54 = buffer.readf32(v52, v53)
+				local v55 = u7
+				local v56 = u8
+				u8 = u8 + 4
+				local v57 = buffer.readf32(v55, v56)
+				v27.velocity = Vector3.new(v51, v54, v57)
+				local v58 = u7
+				local v59 = u8
+				u8 = u8 + 8
+				v27.ID = buffer.readf64(v58, v59)
+				local v60 = u7
+				local v61 = u8
+				u8 = u8 + 1
+				if buffer.readu8(v60, v61) == 1 then
+					local v62 = u7
+					local v63 = u8
+					u8 = u8 + 2
+					local v64 = buffer.readu16(v62, v63)
+					local v65 = buffer.readstring
+					local v66 = u7
+					local v67 = u8
+					u8 = u8 + v64
+					v27.Skin = v65(v66, v67, v64)
+				else
+					v27.Skin = nil
+				end
+				if u21[1] then
+					task.spawn(u21[1], v27)
+				else
+					local v68 = u22[1]
+					table.insert(v68, v27)
+					if #u22[1] > 64 then
+						warn(
+							(
+								("[ZAP] %* events in queue for BallStream. Did you forget to attach a listener?"):format(
+									#u22[1]
+								)
+							)
+						)
+					end
+				end
+			else
+				error("Unknown event id")
+			end
+		end
+	end)
+	local v71 = {
+		["SendEvents"] = v20,
+		["BallStream"] = {
+			["SetCallback"] = function(p69) --[[Function name: SetCallback, line 198]]
+				--[[
+            Upvalues:
+                [1] = u21
+                [2] = u22
+            --]]
+				u21[1] = p69
+				for _, v70 in u22[1] do
+					task.spawn(p69, v70)
+				end
+				u22[1] = {}
+				return function() --[[Anonymous function at line 211]]
+					--[[
+                Upvalues:
+                    [1] = u21
+                --]]
+					u21[1] = nil
+				end
+			end,
+		},
+	}
+	return v71
+end
+local BallStream = zapModule().BallStream
+
+local BallTrajectory = {}
+do
+	BallTrajectory.OnBallAdded = Signal.new()
+	BallTrajectory.OnBallRemoved = Signal.new()
+	BallTrajectory.OnBallUpdated = Signal.new()
+
+	local Balls = {}
+
+	-- Add and Removed Signals
+	hooks:Add(CollectionService:GetInstanceAddedSignal("Ball"):Connect(function(ballModel)
+		if ballModel:IsA("Model") then
+			local self = {
+				Model = ballModel,
+				Position = ballModel.PrimaryPart.Position,
+				Velocity = Vector3.zero,
+				ServerVelocity = nil,
+				Acceleration = Vector3.yAxis * -GameModule.Physics.Gravity,
+				LastUpdateClock = os.clock(),
+			}
+			Balls[ballModel:GetAttribute("ServerId")] = self
+			BallTrajectory.OnBallAdded:Fire(self)
+			--predictBallLanding(ballModel)
+		end
+	end))
+
+	hooks:Add(CollectionService:GetInstanceRemovedSignal("Ball"):Connect(function(ballModel)
+		if ballModel:IsA("Model") then
+			local self = Balls[ballModel:GetAttribute("ServerId")]
+			Balls[ballModel:GetAttribute("ServerId")] = nil
+			BallTrajectory.OnBallRemoved:Fire(self)
+		end
+	end))
+
+	-- Maths
+	local function trajectoryResult(Ball)
+		local velocity, position, acceleration = Ball.Velocity, Ball.Position, Ball.Acceleration
+		local floorY = CourtPart.Position.Y + CourtPart.Size.Y * 0.5 + GameModule.Physics.Radius
+
+		local a, b, c = 0.5 * acceleration.Y, velocity.Y, position.Y - floorY
+		local timeToHit = solveQuadratic(a, b, c)
+
+		if not timeToHit then
+			return nil, nil
+		end
+
+		local landingX = position.X + velocity.X * timeToHit + 0.5 * acceleration.X * timeToHit * timeToHit
+		local landingZ = position.Z + velocity.Z * timeToHit + 0.5 * acceleration.Z * timeToHit * timeToHit
+
+		return Vector3.new(landingX, floorY, landingZ), timeToHit
+	end
+
+	local function predictBallLanding(ball)
+		local resultVector, dT = trajectoryResult(ball)
+
+		BallTrajectory.LastBall = ball
+		--BallTrajectory.LastVelocity = ball.Velocity
+		BallTrajectory.LastTrajectory = resultVector
+		BallTrajectory.LastTime = dT
+
+		BallTrajectory.OnBallUpdated:Fire(ball, resultVector, dT)
+	end
+
+	-- Progression function
+	local function updateBall(ballData, dt)
+		local clock = os.clock()
+		dt = dt or clock - ballData.LastUpdateClock
+
+		-- Use Acceleration property instead of gravity
+		ballData.Position += ballData.Velocity * dt + 0.5 * ballData.Acceleration * dt * dt
+		ballData.Velocity += ballData.Acceleration * dt
+
+		-- Update LastUpdateClock
+		ballData.LastUpdateClock = clock
+
+		-->> Calculate Trajectory
+		predictBallLanding(ballData)
+		--BallTrajectory.OnBallUpdated:Fire(BallData)
+	end
+
+	hooks:Add(RunService.Heartbeat:Connect(function(dt)
+		for ID, BallData in Balls do
+			updateBall(BallData)
+		end
+	end))
+
+	local serverUpdateTime = 1 / 60
+	BallStream.SetCallback(function(data)
+		--warn(Serializer(data, { Prettify = true }))
+		local BallData = Balls[data.ID]
+		if BallData then
+			--warn(BallData)
+			BallData.Position = data.cframe.Position
+			BallData.Velocity = data.velocity
+
+			if BallData.ServerVelocity then
+				local acceleration: Vector3 = (data.velocity - BallData.ServerVelocity) / serverUpdateTime
+				if acceleration.Magnitude > 200 then
+					BallData.Acceleration = Vector3.yAxis * -GameModule.Physics.Gravity
+				else
+					BallData.Acceleration = acceleration
+				end
+			end
+
+			BallData.ServerVelocity = data.velocity
+			--RunService.RenderStepped:Wait()
+
+			local deltaTime = LocalPlayer:GetNetworkPing() * 0.5
+			updateBall(BallData, deltaTime)
+		end
+	end)
+
+	BallTrajectory.GetAllBalls = function()
+		return Balls
+	end
+end
+
+--[[
 local BallTrajectory
 if hookfunction and newcclosure then
 	BallTrajectory = {}
@@ -226,7 +563,9 @@ if hookfunction and newcclosure then
 		UNHOOKED = true
 	end)
 end
+]]
 
+-------
 local StylePath = ReplicatedStorage:WaitForChild("Content"):WaitForChild("Style")
 local AbilityPath = ReplicatedStorage:WaitForChild("Content"):WaitForChild("Ability")
 
@@ -2121,19 +2460,6 @@ do
 		end
 	end
 
-	local HitboxesFolder = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Hitboxes")
-
-	-- Auto Receive (Dive, Set)
-	local specialController = require(ReplicatedFirst:WaitForChild("Controllers"):WaitForChild("SpecialController"))
-	local effectRemoteThings = ReplicatedStorage:WaitForChild("Packages")
-		:WaitForChild("_Index")
-		:WaitForChild("sleitnick_knit@1.7.0")
-		:WaitForChild("knit")
-		:WaitForChild("Services")
-		:WaitForChild("StyleService")
-		:WaitForChild("RF")
-		:WaitForChild("PlaySpecialEffect")
-
 	if gameController and hookmetamethod and BallTrajectory and GameModule then
 		local ENABLED = true
 		local DIVE_ENABLED = true
@@ -2323,29 +2649,20 @@ do
 				end
 			end
 
-			-- Check if ball is close to player for setting
-			local ballPart = ball.Ball
-
 			local playerPing = LocalPlayer:GetNetworkPing()
-			local gravityMultiplier = ball.GravityMultiplier or 1
-			local ballAcceleration = ball.Acceleration or Vector3.new(0, 0, 0)
-			local velocity = BallTrajectory.LastVelocity or ballPart.AssemblyLinearVelocity
-			local position = ballPart:GetPivot().Position
-			local GRAVITY = -GameModule.Physics.Gravity * gravityMultiplier
+			local ballAcceleration = ball.Acceleration
+			local velocity = ball.Velocity
+			local position = ball.Position
 
 			-- Calculate where the ball will be after the time of player's ping has passed
 			local t = playerPing
 			local ballPosition = Vector3.new(
 				position.X + velocity.X * t + 0.5 * ballAcceleration.X * t * t,
-				position.Y + velocity.Y * t + 0.5 * (ballAcceleration.Y + GRAVITY) * t * t,
+				position.Y + velocity.Y * t + 0.5 * ballAcceleration.Y * t * t,
 				position.Z + velocity.Z * t + 0.5 * ballAcceleration.Z * t * t
 			)
 
 			--local posToPlayerDist = (position - playerPosition).Magnitude
-			local ballToPlayerDist = (ballPosition - playerPosition).Magnitude
-			--local landingToPlayerDist = (landingPosition - playerPosition).Magnitude
-			local setRange = 7 * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS["Set"] or 1)
-
 			local setHitboxCFrame, setHitboxSize = getHitboxCFrame("Set")
 
 			if
@@ -2370,36 +2687,6 @@ do
 				return
 			end
 
-			setthreadidentity(2)
-
-			if styleFromId(LocalPlayer:GetAttribute("Style")).DisplayName == "Kimiro" then
-				if timeToLand > 0.4 + LocalPlayer:GetNetworkPing() then
-					return
-				end
-
-				local specialData = table.clone(specialController.Special:get().Metadata)
-				local maxDist = specialData.Power.Max
-
-				if maxDist < ballToPlayerDist - 1.5 then
-					return
-				end
-
-				specialData.Target = (landingPosition - playerPosition) * 1.05
-				local thing = math.max(specialData.Target.Magnitude, specialData.Power.Min)
-				specialData.Target = specialData.Target.Unit * thing
-
-				--setthreadidentity(2)
-				gameController:Dive(specialData)
-				effectRemoteThings:InvokeServer({
-					IsStrong = (specialData.Target.Magnitude - specialData.Power.Min)
-							/ (specialData.Power.Max - specialData.Power.Min)
-						> 0.5,
-				})
-
-				setthreadidentity(8)
-				return
-			end
-
 			-- Calculate dive parameters
 			local diveSpeedMultiplier = LocalPlayer:GetAttribute("GameDiveSpeedMultiplier") or 1
 			local initialVelocity = 36 * diveSpeedMultiplier
@@ -2407,7 +2694,6 @@ do
 
 			-- Calculate horizontal distance to landing point
 			local diffVector = (landingPosition - playerPosition) * Vector3.new(1, 0, 1)
-			local distance = diffVector.Magnitude
 
 			--{{ NEW LOGIC }}
 			-- Simulate possible dive timings up to 1 second ahead, at most 60 steps per second
@@ -2440,7 +2726,7 @@ do
 
 				local simBallPosition = Vector3.new(
 					position.X + velocity.X * t + 0.5 * ballAcceleration.X * t * t,
-					position.Y + velocity.Y * t + 0.5 * (ballAcceleration.Y + GRAVITY) * t * t,
+					position.Y + velocity.Y * t + 0.5 * ballAcceleration.Y * t * t,
 					position.Z + velocity.Z * t + 0.5 * ballAcceleration.Z * t * t
 				)
 
@@ -3396,18 +3682,15 @@ do
 							end
 
 							local playerPing = LocalPlayer:GetNetworkPing()
-							local gravityMultiplier = ball.GravityMultiplier or 1
-							local acceleration = ball.Acceleration or Vector3.new(0, 0, 0)
-							local ballPart = ball.Ball.PrimaryPart
-							local velocity = BallTrajectory.LastVelocity or ballPart.AssemblyLinearVelocity
-							local position = ballPart and ballPart.Position or ball.Ball:GetPivot().Position
-							local GRAVITY = -GameModule.Physics.Gravity * gravityMultiplier
+							local acceleration = ball.Acceleration
+							local velocity = ball.Velocity
+							local position = ball.Position
 
 							-- Calculate where the ball will be after the time of player's ping has passed
 							local t = playerPing
 							local ballPosition = Vector3.new(
 								position.X + velocity.X * t + 0.5 * acceleration.X * t * t,
-								position.Y + velocity.Y * t + 0.5 * (acceleration.Y + GRAVITY) * t * t,
+								position.Y + velocity.Y * t + 0.5 * acceleration.Y * t * t,
 								position.Z + velocity.Z * t + 0.5 * acceleration.Z * t * t
 							)
 
@@ -3558,9 +3841,7 @@ do
 												-- Predict ball position at that time (ignoring gravity for simplicity)
 												local predictedPos = Vector3.new(
 													position.X + velocity.X * t + 0.5 * acceleration.X * t * t,
-													position.Y
-														+ velocity.Y * t
-														+ 0.5 * (acceleration.Y + GRAVITY) * t * t,
+													position.Y + velocity.Y * t + 0.5 * acceleration.Y * t * t,
 													position.Z + velocity.Z * t + 0.5 * acceleration.Z * t * t
 												)
 												-- Place player slightly behind the net on their side
@@ -3696,7 +3977,7 @@ do
 				PreviewBallTransparency = 0.5,
 				BeamColor = Color3.fromRGB(82, 82, 82),
 				BeamWidth = 0.2,
-				PreviewBallScale = 0.8,
+				PreviewBallScale = GameModule.Physics.Radius * 2,
 			}
 
 			local BallPreviews = {}
@@ -3719,13 +4000,13 @@ do
 				end
 				removeBallPreview(ball)
 
-				local originalBall = ball.Ball
+				local originalBall = ball.Model
 				local originalPart = originalBall.PrimaryPart
-				local ballSize = originalPart.Size.Magnitude * PreviewConfig.PreviewBallScale
+				local ballSize = Vector3.one * PreviewConfig.PreviewBallScale
 
 				local previewBall = Instance.new("Part")
 				previewBall.Shape = Enum.PartType.Ball
-				previewBall.Size = Vector3.new(ballSize, ballSize, ballSize)
+				previewBall.Size = ballSize
 				previewBall.Color = PreviewConfig.PreviewBallColor
 				previewBall.Transparency = PreviewConfig.PreviewBallTransparency
 				previewBall.CanCollide = false
@@ -3780,14 +4061,15 @@ do
 					-- Get court information
 					local courtPosition = CourtPart.Position
 					local courtSize = CourtPart.Size
+					local ballRadius = GameModule.Physics.Radius
 
-					-- Check if landing position is within court boundaries on X axis
-					local isInXBounds = landingPosition.X > (courtPosition.X - courtSize.X / 2)
-						and landingPosition.X < (courtPosition.X + courtSize.X / 2)
+					-- Check if landing position is within court boundaries on X axis (with radius)
+					local isInXBounds = landingPosition.X > (courtPosition.X - courtSize.X / 2 - ballRadius)
+						and landingPosition.X < (courtPosition.X + courtSize.X / 2 + ballRadius)
 
-					-- Check if landing position is within court boundaries on Z axis
-					local isInZBounds = landingPosition.Z > (courtPosition.Z - courtSize.Z / 2)
-						and landingPosition.Z < (courtPosition.Z + courtSize.Z / 2)
+					-- Check if landing position is within court boundaries on Z axis (with radius)
+					local isInZBounds = landingPosition.Z > (courtPosition.Z - courtSize.Z / 2 - ballRadius)
+						and landingPosition.Z < (courtPosition.Z + courtSize.Z / 2 + ballRadius)
 
 					-- Determine if ball is in bounds (both X and Z must be within court)
 					local isInBounds = isInXBounds and isInZBounds
@@ -3817,15 +4099,15 @@ do
 				if not enabled then
 					cleanupAllPreviews()
 				else
-					for _, ball in BallTrajectory.getAllBalls() do
+					for _, ball in BallTrajectory.GetAllBalls() do
 						createBallPreview(ball)
 					end
 				end
 				return PreviewConfig.Enabled
 			end
 
-			BallTrajectory.newBallSignal:Connect(createBallPreview)
-			BallTrajectory.trajectoryUpdatedSignal:Connect(function(ball, landingPosition, remainingTime)
+			BallTrajectory.OnBallAdded:Connect(createBallPreview)
+			BallTrajectory.OnBallUpdated:Connect(function(ball, landingPosition, remainingTime)
 				if landingPosition then
 					if BallPreviews[ball] then
 						updateBallPreview(ball, landingPosition, remainingTime)
@@ -3836,7 +4118,7 @@ do
 					removeBallPreview(ball)
 				end
 			end)
-			BallTrajectory.ballDestroySignal:Connect(removeBallPreview)
+			BallTrajectory.OnBallRemoved:Connect(removeBallPreview)
 
 			hooks:Add(function()
 				ToggleBallTrajectoryPreviews(false)
