@@ -1506,7 +1506,6 @@ if currentCam then
 		)
 	end
 
-	local IN_AIR = false
 	local HIDDEN_SHIFTLOCK = true
 
 	do
@@ -1570,7 +1569,7 @@ if currentCam then
 		ConfigHandler:AddElement("AirShiftlockKeybind", kb)
 	end
 
-	if filtergc and hookfunction and newcclosure then
+	if hookmetamethod and newcclosure then
 		local ENABLED = false
 		local CUSTOM_OFFSET = Vector3.new(0, 0, 0)
 
@@ -1587,8 +1586,6 @@ if currentCam then
 				then
 					if ENABLED then
 						return CUSTOM_OFFSET
-					elseif not IN_AIR and HIDDEN_SHIFTLOCK then
-						return Vector3.zero
 					end
 				end
 				return old(self, index, ...)
