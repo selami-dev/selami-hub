@@ -353,6 +353,8 @@ do
 	BallTrajectory.OnBallRemoved = Signal.new()
 	BallTrajectory.OnBallUpdated = Signal.new()
 
+	GameModule = require(ReplicatedStorage:WaitForChild("Configuration"):WaitForChild("Game"))
+
 	local Balls = {}
 
 	-- Add and Removed Signals
@@ -1447,8 +1449,8 @@ if currentCam then
 
 	do
 		local DEFAULT_FOV = currentCam.FieldOfView
-		local FOV_VALUE = 90
-		local ENABLED = true
+		local FOV_VALUE = 65
+		local ENABLED = false
 
 		local connections = Janitor.new()
 
@@ -1508,62 +1510,40 @@ if currentCam then
 	local HIDDEN_SHIFTLOCK = true
 
 	do
-		local connections = Janitor.new()
-
-		local default = Enum.RotationType.CameraRelative
-
-		local old
-		old = hookmetamethod(
-			game,
-			"__newindex",
-			newcclosure(function(self, index, val, ...)
-				if
-					not checkcaller()
-					and HIDDEN_SHIFTLOCK
-					and IN_AIR
-					and rawequal(self, UserGameSettings)
-					and rawequal(index, "RotationType")
-				then
-					return old(self, index, Enum.RotationType.MovementRelative)
-				end
-				return old(self, index, val, ...)
-			end)
-		)
-
-		local function setActive(v)
-			IN_AIR = v
-		end
-
-		local function charAdded(char)
-			setActive(true)
-			connections:Add(
-				char:GetAttributeChangedSignal("Jumping"):Connect(function()
-					if char:GetAttribute("Jumping") then
-						setActive(false)
-					else
-						setActive(true)
-					end
-				end),
-				nil,
-				"jumpCon"
-			)
-		end
-
-		local function setEnabled(v)
-			HIDDEN_SHIFTLOCK = v
-			if v then
-				connections:Add(LocalPlayer.CharacterAdded:Connect(charAdded))
-				if LocalPlayer.Character then
-					charAdded(LocalPlayer.Character)
-				end
-			else
-				setActive(false)
-				connections:Cleanup()
+		hooks:Add(RunService.RenderStepped:Connect(function(a0: number)
+			local Character = LocalPlayer.Character
+			if not Character then
+				return
 			end
-		end
+
+			local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+			if not Humanoid then
+				return
+			end
+
+			if UserInputService.MouseBehavior == Enum.MouseBehavior.LockCenter then
+				local zoomDistance = (currentCam.CFrame.Position - currentCam.Focus.Position).Magnitude
+				if zoomDistance < 0.5 then -- close enough to be first person
+					-- First Person Detected
+					return
+				end
+				if HIDDEN_SHIFTLOCK then
+					if Character:GetAttribute("Jumping") then
+						UserGameSettings.RotationType = Enum.RotationType.CameraRelative
+						Humanoid.CameraOffset = Vector3.new(1.75, 0, 0)
+					else
+						UserGameSettings.RotationType = Enum.RotationType.MovementRelative
+						Humanoid.CameraOffset = Vector3.new(0, 0, 0)
+					end
+				else
+					UserGameSettings.RotationType = Enum.RotationType.CameraRelative
+					Humanoid.CameraOffset = Vector3.new(1.75, 0, 0)
+				end
+			end
+		end))
 
 		hooks:Add(function()
-			setEnabled(false)
+			HIDDEN_SHIFTLOCK = false
 		end)
 
 		local HiddenShiftlockNode = CameraTab:TreeNode({
@@ -1575,7 +1555,7 @@ if currentCam then
 			Label = "Enabled",
 			Value = true,
 			Callback = function(_, v)
-				setEnabled(v)
+				HIDDEN_SHIFTLOCK = v
 			end,
 		})
 		ConfigHandler:AddElement("AirShiftlockToggle", checkBox)
