@@ -108,23 +108,77 @@ gameController = require(ReplicatedFirst:WaitForChild("Controllers"):WaitForChil
 local GameModule
 
 local function solveQuadratic(a, b, c)
+	if math.abs(a) < 1e-12 then -- linear fallback
+		if math.abs(b) < 1e-12 then
+			return nil
+		end
+		local t = -c / b
+		return t > 0 and t or nil
+	end
+
 	local discriminant = b * b - 4 * a * c
 	if discriminant < 0 then
 		return nil
 	end
 
-	local t1 = (-b + math.sqrt(discriminant)) / (2 * a)
-	local t2 = (-b - math.sqrt(discriminant)) / (2 * a)
+	local sqrtDisc = math.sqrt(discriminant)
+	local denom = 2 * a
 
-	-- Return the smallest positive time, or nil if no positive solutions
+	local t1 = (-b + sqrtDisc) / denom
+	local t2 = (-b - sqrtDisc) / denom
+
 	if t1 > 0 and t2 > 0 then
-		return math.min(t1, t2)
+		return (t1 < t2) and t1 or t2
 	elseif t1 > 0 then
 		return t1
 	elseif t2 > 0 then
 		return t2
 	end
 	return nil
+end
+
+local function cbrt(x)
+	return x >= 0 and x ^ (1 / 3) or -((-x) ^ (1 / 3))
+end
+
+local function solveCubic(a, b, c, d)
+	if math.abs(a) < 1e-12 then
+		return solveQuadratic(b, c, d)
+	end
+
+	-- Normalize
+	local invA = 1 / a
+	b, c, d = b * invA, c * invA, d * invA
+
+	-- Depressed cubic substitution: t = x - b/3
+	local bb = b * b
+	local p = (3 * c - bb) / 3
+	local q = (2 * bb * b - 9 * b * c + 27 * d) / 27
+	local discriminant = (q * q) / 4 + (p * p * p) / 27
+
+	if discriminant >= 0 then
+		local sqrtDisc = math.sqrt(discriminant)
+		local u = cbrt(-q / 2 + sqrtDisc)
+		local v = cbrt(-q / 2 - sqrtDisc)
+		local t = u + v - b / 3
+		return t > 0 and t or nil
+	else
+		local sqrtP = math.sqrt(-p / 3)
+		local phi = math.acos(-q / (2 * sqrtP ^ 3))
+		local offset = -b / 3
+
+		local t1 = 2 * sqrtP * math.cos(phi / 3) + offset
+		local t2 = 2 * sqrtP * math.cos((phi + 2 * math.pi) / 3) + offset
+		local t3 = 2 * sqrtP * math.cos((phi + 4 * math.pi) / 3) + offset
+
+		local minT = math.huge
+		for _, t in ipairs({ t1, t2, t3 }) do
+			if t > 0 and t < minT then
+				minT = t
+			end
+		end
+		return (minT < math.huge) and minT or nil
+	end
 end
 
 local function zapModule()
@@ -365,6 +419,7 @@ do
 				Position = ballModel.PrimaryPart.Position,
 				Velocity = Vector3.zero,
 				ServerVelocity = nil,
+				Jerk = Vector3.zero,
 				Acceleration = Vector3.yAxis * -GameModule.Physics.Gravity,
 				LastUpdateClock = os.clock(),
 			}
@@ -384,18 +439,29 @@ do
 
 	-- Maths
 	local function trajectoryResult(Ball)
-		local velocity, position, acceleration = Ball.Velocity, Ball.Position, Ball.Acceleration
+		local velocity, position, acceleration, jerk =
+			Ball.Velocity, Ball.Position, Ball.Acceleration, Ball.Jerk or Vector3.zero
 		local floorY = CourtPart.Position.Y + CourtPart.Size.Y * 0.5 + GameModule.Physics.Radius
 
-		local a, b, c = 0.5 * acceleration.Y, velocity.Y, position.Y - floorY
-		local timeToHit = solveQuadratic(a, b, c)
+		-- Main trajectory calculation
+		local a = (1 / 6) * jerk.Y
+		local b = 0.5 * acceleration.Y
+		local c = velocity.Y
+		local d = position.Y - floorY
 
+		local timeToHit = solveCubic(a, b, c, d)
 		if not timeToHit then
 			return nil, nil
 		end
 
-		local landingX = position.X + velocity.X * timeToHit + 0.5 * acceleration.X * timeToHit * timeToHit
-		local landingZ = position.Z + velocity.Z * timeToHit + 0.5 * acceleration.Z * timeToHit * timeToHit
+		local landingX = position.X
+			+ velocity.X * timeToHit
+			+ 0.5 * acceleration.X * timeToHit ^ 2
+			+ (1 / 6) * jerk.X * timeToHit ^ 3
+		local landingZ = position.Z
+			+ velocity.Z * timeToHit
+			+ 0.5 * acceleration.Z * timeToHit ^ 2
+			+ (1 / 6) * jerk.Z * timeToHit ^ 3
 
 		return Vector3.new(landingX, floorY, landingZ), timeToHit
 	end
@@ -428,6 +494,102 @@ do
 		--BallTrajectory.OnBallUpdated:Fire(BallData)
 	end
 
+	-- Public Functions
+	BallTrajectory.CalculateTrajectory = function(Data: { Velocity: Vector3, Position: Vector3, Acceleration: Vector3 })
+		local resultVector, dT = trajectoryResult(Data)
+		return resultVector, dT
+	end
+
+	BallTrajectory.IsInBoundsOfCourt = function(Position: Vector3)
+		-- Get court information
+		local courtPosition = CourtPart.Position
+		local courtSize = CourtPart.Size
+		local ballRadius = GameModule.Physics.Radius
+
+		-- Check if landing position is within court boundaries on X axis (with radius)
+		local isInXBounds = Position.X > (courtPosition.X - courtSize.X / 2 - ballRadius)
+			and Position.X < (courtPosition.X + courtSize.X / 2 + ballRadius)
+
+		-- Check if landing position is within court boundaries on Z axis (with radius)
+		local isInZBounds = Position.Z > (courtPosition.Z - courtSize.Z / 2 - ballRadius)
+			and Position.Z < (courtPosition.Z + courtSize.Z / 2 + ballRadius)
+
+		-- Determine if ball is in bounds (both X and Z must be within court)
+		return isInXBounds and isInZBounds
+	end
+
+	BallTrajectory.ClampVectorToCourt = function(origin: Vector3, target: Vector3)
+		local courtPosition = CourtPart.Position
+		local courtSize = CourtPart.Size
+		local ballRadius = GameModule.Physics.Radius
+
+		-- Calculate court bounds
+		local minX = courtPosition.X - courtSize.X / 2 - ballRadius
+		local maxX = courtPosition.X + courtSize.X / 2 + ballRadius
+		local minZ = courtPosition.Z - courtSize.Z / 2 - ballRadius
+		local maxZ = courtPosition.Z + courtSize.Z / 2 + ballRadius
+
+		-- If already in bounds, return target
+		if target.X >= minX and target.X <= maxX and target.Z >= minZ and target.Z <= maxZ then
+			return target
+		end
+
+		-- Find intersection with court boundary along direction from origin to target
+		local dir = (target - origin)
+		local dirXZ = Vector3.new(dir.X, 0, dir.Z)
+		if dirXZ.Magnitude == 0 then
+			return origin
+		end
+		local unitDir = dirXZ.Unit
+
+		-- Raycast from origin to court bounds
+		local tMax = math.huge
+
+		-- X bounds
+		if unitDir.X ~= 0 then
+			local tx1 = (minX - origin.X) / unitDir.X
+			local tx2 = (maxX - origin.X) / unitDir.X
+			local txMax = math.max(tx1, tx2)
+			tMax = math.min(tMax, txMax)
+		end
+
+		-- Z bounds
+		if unitDir.Z ~= 0 then
+			local tz1 = (minZ - origin.Z) / unitDir.Z
+			local tz2 = (maxZ - origin.Z) / unitDir.Z
+			local tzMax = math.max(tz1, tz2)
+			tMax = math.min(tMax, tzMax)
+		end
+
+		-- Clamp tMax to positive direction only
+		tMax = math.max(0, math.min(tMax, dirXZ.Magnitude))
+
+		local clampedXZ = origin + unitDir * tMax
+		return Vector3.new(clampedXZ.X, target.Y, clampedXZ.Z)
+	end
+
+	BallTrajectory.RunPhysics = function(
+		Data: {
+			Velocity: Vector3,
+			Position: Vector3,
+			Acceleration: Vector3,
+			Jerk: Vector3,
+		},
+		DeltaTime: number
+	)
+		local outputData = {}
+
+		outputData.Position = Data.Position
+			+ Data.Velocity * DeltaTime
+			+ 0.5 * Data.Acceleration * DeltaTime ^ 2
+			+ (1 / 6) * Data.Jerk * DeltaTime ^ 3 -- fixed from 1/3
+		outputData.Velocity = Data.Velocity + Data.Acceleration * DeltaTime + 0.5 * Data.Jerk * DeltaTime ^ 2
+		outputData.Acceleration = Data.Acceleration + Data.Jerk * DeltaTime
+		outputData.Jerk = Data.Jerk -- constant jerk assumption
+
+		return outputData
+	end
+
 	hooks:Add(RunService.Heartbeat:Connect(function(dt)
 		for ID, BallData in Balls do
 			updateBall(BallData)
@@ -445,11 +607,18 @@ do
 
 			if BallData.ServerVelocity then
 				local acceleration: Vector3 = (data.velocity - BallData.ServerVelocity) / serverUpdateTime
-				if acceleration.Magnitude > 200 then
-					BallData.Acceleration = Vector3.yAxis * -GameModule.Physics.Gravity
-				else
-					BallData.Acceleration = acceleration
+				if acceleration.Magnitude > 250 then
+					acceleration = Vector3.yAxis * -GameModule.Physics.Gravity
 				end
+
+				local calculatedJerk = (acceleration - BallData.Acceleration) / serverUpdateTime
+
+				if calculatedJerk.Magnitude > 250 then
+					calculatedJerk = Vector3.zero
+				end
+
+				BallData.Acceleration = acceleration
+				BallData.Jerk = calculatedJerk
 			end
 
 			BallData.ServerVelocity = data.velocity
@@ -464,108 +633,6 @@ do
 		return Balls
 	end
 end
-
---[[
-local BallTrajectory
-if hookfunction and newcclosure then
-	BallTrajectory = {}
-
-	local BallModule
-	BallModule =
-		require(ReplicatedFirst:WaitForChild("Controllers"):WaitForChild("BallController"):WaitForChild("Ball"))
-	GameModule = require(ReplicatedStorage:WaitForChild("Configuration"):WaitForChild("Game"))
-
-	local newBallSignal, ballDestroySignal, trajectoryUpdatedSignal = Signal.new(), Signal.new(), Signal.new()
-
-	BallTrajectory.newBallSignal, BallTrajectory.ballDestroySignal, BallTrajectory.trajectoryUpdatedSignal =
-		newBallSignal, ballDestroySignal, trajectoryUpdatedSignal
-
-	local function trajectoryResult(ball, velocity)
-		local gravityMultiplier = ball.GravityMultiplier or 1
-		local acceleration = ball.Acceleration or Vector3.new(0, 0, 0)
-		local ballPart = ball.Ball.PrimaryPart
-		local velocity, position = velocity or ballPart.AssemblyLinearVelocity, ballPart.Position
-		local floorY = CourtPart.Position.Y + CourtPart.Size.Y * 0.5 + GameModule.Physics.Radius
-		local GRAVITY = -GameModule.Physics.Gravity * gravityMultiplier
-
-		--warn(acceleration, GRAVITY)
-
-		local a, b, c = 0.5 * GRAVITY, velocity.Y, position.Y - floorY
-		local timeToHit = solveQuadratic(a, b, c)
-
-		if not timeToHit then
-			return nil, nil
-		end
-
-		local landingX = position.X + velocity.X * timeToHit + 0.5 * acceleration.X * timeToHit * timeToHit
-		local landingZ = position.Z + velocity.Z * timeToHit + 0.5 * acceleration.Z * timeToHit * timeToHit
-
-		return Vector3.new(landingX, floorY, landingZ), timeToHit
-	end
-
-	local function predictBallLanding(ball, velocity)
-		local resultVector, dT = trajectoryResult(ball, velocity)
-
-		BallTrajectory.LastBall = ball
-		BallTrajectory.LastVelocity = velocity
-		BallTrajectory.LastTrajectory = resultVector
-		BallTrajectory.LastTime = dT
-
-		trajectoryUpdatedSignal:Fire(ball, resultVector, dT, velocity)
-	end
-
-	local function getAllBalls()
-		return BallModule.All
-	end
-	BallTrajectory.getAllBalls = getAllBalls
-
-	local UNHOOKED = false
-
-	local oldNew
-	oldNew = hookfunction(
-		BallModule.new,
-		newcclosure(function(...)
-			if UNHOOKED then
-				return oldNew(...)
-			end
-			local newBall = oldNew(...)
-			newBallSignal:Fire(newBall)
-			predictBallLanding(newBall)
-			return newBall
-		end)
-	)
-
-	local oldUpdate
-	oldUpdate = hookfunction(
-		BallModule.Update,
-		newcclosure(function(self, ...)
-			if UNHOOKED then
-				return oldUpdate(self, ...)
-			end
-			oldUpdate(self, ...)
-			predictBallLanding(self, ({ ... })[2])
-			--local data = HaikyuuRaper:Serialize({self, ...}, {Prettify = true})
-			--print(data)
-		end)
-	)
-
-	local oldDestroy
-	oldDestroy = hookfunction(
-		BallModule.Destroy,
-		newcclosure(function(self, ...)
-			if UNHOOKED then
-				return oldDestroy(self, ...)
-			end
-			ballDestroySignal:Fire(self)
-			oldDestroy(self, ...)
-		end)
-	)
-
-	hooks:Add(function()
-		UNHOOKED = true
-	end)
-end
-]]
 
 -------
 local StylePath = ReplicatedStorage:WaitForChild("Content"):WaitForChild("Style")
@@ -2357,45 +2424,6 @@ do
 		end)
 	end
 
-	--[[
-        if gameController and hookmetamethod and BallTrajectory then
-            local ENABLED = true
-
-            local player = LocalPlayer
-            local old; old = hookmetamethod(game, "__index", newcclosure(function(self, index, ...)
-                if ENABLED and not checkcaller() and typeof(self) == "Instance" and old(self, "ClassName") == "Humanoid" and rawequal(index, "MoveDirection") and #({...}) == 0 and rawequal(debug.info(3,"f"), gameController.Dive)  then
-                    if BallTrajectory.LastTrajectory then
-                        local diffVector = ((BallTrajectory.LastTrajectory - player.Character:GetPivot().Position) * Vector3.new(1, 0, 1))
-                        if diffVector.Magnitude <= 30 then
-                            return diffVector.Unit
-                        end
-                    end
-                end
-                return old(self, index, ...)
-            end))
-
-            InternalTab:Separator({
-                Text = "Perfect Dive"
-            })
-
-            InternalTab:Checkbox({
-                Label = "Enabled",
-                Value = ENABLED,
-                IniFlag = "PerfectDiveToggle",
-                Callback = function(_, v)
-                    ENABLED = v
-                    HITBOX_MULTIPLIER_ENABLED = v
-                end,
-            })
-
-            hooks:Add(function()
-                ENABLED = false
-                HITBOX_MULTIPLIER_ENABLED = false
-            end)
-        end
-        ]]
-	--
-
 	local function isBallInBox(ballPosition, ballRadius, boxCFrame, boxSize)
 		-- Convert ball position to box's local space
 		local localBallPos = boxCFrame:PointToObjectSpace(ballPosition)
@@ -2635,11 +2663,12 @@ do
 
 			-- Calculate where the ball will be after the time of player's ping has passed
 			local t = playerPing
-			local ballPosition = Vector3.new(
-				position.X + velocity.X * t + 0.5 * ballAcceleration.X * t * t,
-				position.Y + velocity.Y * t + 0.5 * ballAcceleration.Y * t * t,
-				position.Z + velocity.Z * t + 0.5 * ballAcceleration.Z * t * t
-			)
+			local ballPosition = BallTrajectory.RunPhysics({
+				Velocity = velocity,
+				Position = position,
+				Acceleration = ballAcceleration,
+				Jerk = ball.Jerk or Vector3.zero,
+			}, t).Position
 
 			--local posToPlayerDist = (position - playerPosition).Magnitude
 			local setHitboxCFrame, setHitboxSize = getHitboxCFrame("Set")
@@ -2703,11 +2732,12 @@ do
 					simPlayerPos = playerPosition + diveDir * moveDist
 				end
 
-				local simBallPosition = Vector3.new(
-					position.X + velocity.X * t + 0.5 * ballAcceleration.X * t * t,
-					position.Y + velocity.Y * t + 0.5 * ballAcceleration.Y * t * t,
-					position.Z + velocity.Z * t + 0.5 * ballAcceleration.Z * t * t
-				)
+				local simBallPosition = BallTrajectory.RunPhysics({
+					Velocity = velocity,
+					Position = position,
+					Acceleration = ballAcceleration,
+					Jerk = ball.Jerk or Vector3.zero,
+				}, t).Position
 
 				-- Get simulated hitbox for Dive at simPlayerPos
 				local hitboxCFrame, hitboxSize =
