@@ -1,4 +1,4 @@
-local VERSION = "2.1.0"
+local VERSION = "2.1.5"
 task.wait(1)
 
 -->> LDSTN
@@ -3780,7 +3780,7 @@ do
 											) * Vector3.new(1, 0, 1)
 										).Rotation
 
-									if ReplicatedStorage:GetAttribute("LastHitType") ~= "Spike" then
+									if true then
 										if os.clock() - blatantClock > 0.1 then
 											blatantClock = os.clock()
 											task.spawn(function()
@@ -3917,8 +3917,7 @@ do
 		end
 	end
 
-	--[[
-		local old
+	local old
 	old = hookmetamethod(
 		game,
 		"__namecall",
@@ -3927,6 +3926,7 @@ do
 			if not checkcaller() then
 				if
 					AutoFarmConfig.Enabled
+					and AutoFarmConfig.Blatant
 					and getnamecallmethod() == "InvokeServer"
 					and typeof(self) == "Instance"
 					and self.ClassName == "RemoteFunction"
@@ -3936,7 +3936,7 @@ do
 					if typeof(t) == "table" then
 						local action = rawget(t, "Action")
 						if action == "Spike" then
-							rawset(t, "TiltVector", )
+							rawset(t, "TiltVector", t.LookVector)
 						end
 					end
 				end
@@ -3944,7 +3944,6 @@ do
 			return old(self, table.unpack(args))
 		end)
 	)
-	]]
 
 	local toggleCheckbox = AutoFarmTab:Checkbox({
 		Label = "Enabled",
