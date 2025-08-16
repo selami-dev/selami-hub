@@ -620,6 +620,8 @@ do
 
 				BallData.Acceleration = acceleration
 				BallData.Jerk = calculatedJerk
+
+				print("Jerk: " .. tostring(calculatedJerk))
 			end
 
 			BallData.ServerVelocity = data.velocity
