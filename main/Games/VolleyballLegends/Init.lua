@@ -1,4 +1,4 @@
-local VERSION = "2.1.5"
+local VERSION = "2.2.0"
 task.wait(1)
 
 -->> LDSTN
@@ -3680,7 +3680,7 @@ do
 							local centerX = courtPosition.X
 							local centerZ = courtPosition.Z
 								+ (isPlayerOnPositiveZSide and courtSize.Z / 4 or -courtSize.Z / 4)
-							local centerY = rootPart.Position.Y
+							local centerY = 6
 
 							local centerPosition = Vector3.new(centerX, centerY, centerZ)
 							humanoid.WalkToPoint = centerPosition * Vector3.new(1, 0, 1)
@@ -3780,7 +3780,7 @@ do
 											) * Vector3.new(1, 0, 1)
 										).Rotation
 
-									if true then
+									if ball.Position.Y > 5 then
 										if os.clock() - blatantClock > 0.1 then
 											blatantClock = os.clock()
 											task.spawn(function()
@@ -3789,7 +3789,7 @@ do
 												setthreadidentity(8)
 											end)
 										end
-									elseif ball.Position.Y < 10 then
+									else
 										task.spawn(function()
 											setthreadidentity(2)
 											gameController:DoMove("Bump")
