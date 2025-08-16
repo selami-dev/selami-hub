@@ -1,4 +1,4 @@
-local VERSION = "2.0.0"
+local VERSION = "2.0.05"
 task.wait(1)
 
 -->> LDSTN
@@ -3696,14 +3696,7 @@ do
 							local velocity = ball.Velocity
 							local position = ball.Position
 
-							-- Calculate where the ball will be after the time of player's ping has passed
-							local t = playerPing
-							local ballPosition = Vector3.new(
-								position.X + velocity.X * t + 0.5 * acceleration.X * t * t,
-								position.Y + velocity.Y * t + 0.5 * acceleration.Y * t * t,
-								position.Z + velocity.Z * t + 0.5 * acceleration.Z * t * t
-							)
-
+							local ballPosition = position
 							local landingPosition = BallTrajectory.LastTrajectory
 							local timeToLand = BallTrajectory.LastTime
 
@@ -3787,42 +3780,20 @@ do
 											) * Vector3.new(1, 0, 1)
 										).Rotation
 
-									if os.clock() - blatantClock > 0.1 then
+									if os.clock() - blatantClock > 0.02 then
 										blatantClock = os.clock()
-
-										if ballPosition.Y - courtPosition.Y >= 12.5 then
-											blatantClock = os.clock()
-
-											setthreadidentity(2)
-											gameController:DoMove("Spike")
-											setthreadidentity(8)
-
-											--[[
-											local args = {
-												{
-													Charge = 1,
-													Action = "Spike",
-													SpecialCharge = 1,
-													TiltDirection = Vector3.new(0, 1, 0),
-													BallId = ballPart:GetAttribute("ServerId"),
-													MoveDirection = Vector3.new(0, 0, 0),
-													From = "Client",
-													HitboxSize = spikeHitboxSize,
-													LookVector = (
-														CourtPart.CFrame.Position * Vector3.new(1, 0, 1)
-														- rootPart.Position * Vector3.new(1, 0, 1)
-													).Unit,
-												},
-											}
-
-											interactRemote:InvokeServer(unpack(args))
-											continue
-											]]
-										else
-											setthreadidentity(2)
-											gameController:DoMove("Bump")
-											setthreadidentity(8)
-										end
+										task.spawn(function()
+											if ReplicatedStorage:GetAttribute("LastHitType") ~= "Spike" then
+												blatantClock = os.clock()
+												setthreadidentity(2)
+												gameController:DoMove("Spike")
+												setthreadidentity(8)
+											else
+												setthreadidentity(2)
+												gameController:DoMove("Bump")
+												setthreadidentity(8)
+											end
+										end)
 									end
 								else
 									-- Teleport player to where the ball would be right after it passed the net
@@ -3925,7 +3896,6 @@ do
 
 								humanoid.WalkToPoint = BallTrajectory.LastTrajectory * Vector3.new(1, 0, 1)
 									+ rootPart.Position * Vector3.new(0, 1, 0)
-
 								bump()
 							end
 						end
@@ -3945,6 +3915,35 @@ do
 			jan:Cleanup()
 		end
 	end
+
+	--[[
+		local old
+	old = hookmetamethod(
+		game,
+		"__namecall",
+		newcclosure(function(self, ...)
+			local args = { ... }
+			if not checkcaller() then
+				if
+					AutoFarmConfig.Enabled
+					and getnamecallmethod() == "InvokeServer"
+					and typeof(self) == "Instance"
+					and self.ClassName == "RemoteFunction"
+					and self.Name == "Interact"
+				then
+					local t = args[1]
+					if typeof(t) == "table" then
+						local action = rawget(t, "Action")
+						if action == "Spike" then
+							rawset(t, "TiltVector", )
+						end
+					end
+				end
+			end
+			return old(self, table.unpack(args))
+		end)
+	)
+	]]
 
 	local toggleCheckbox = AutoFarmTab:Checkbox({
 		Label = "Enabled",
