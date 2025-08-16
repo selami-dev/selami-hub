@@ -1,4 +1,4 @@
-local VERSION = "2.0.5"
+local VERSION = "2.1.0"
 task.wait(1)
 
 -->> LDSTN
@@ -3789,7 +3789,7 @@ do
 												setthreadidentity(8)
 											end)
 										end
-									else
+									elseif ball.Position.Y < 10 then
 										task.spawn(function()
 											setthreadidentity(2)
 											gameController:DoMove("Bump")
