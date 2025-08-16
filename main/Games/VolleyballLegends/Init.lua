@@ -1,3 +1,4 @@
+local VERSION = "1.0.0"
 task.wait(1)
 
 -->> LDSTN
@@ -46,7 +47,7 @@ local Signal = HaikyuuRaper.Signal
 local ConfigHandler = HaikyuuRaper.configHandler
 
 local Window = HaikyuuRaper.window:CreateTab({
-	Name = "🏐 Volleyball Legends",
+	Name = "🏐 Volleyball Legends " .. VERSION,
 	Visible = true,
 })
 
