@@ -950,7 +950,7 @@ end
 function BaseLoader:_InitImGui()
 	--warn("This is certainly interesting")
 
-	local PrefabsId = "rbxassetid://" .. ImGui.PrefabsId
+	local PrefabsId = "rbxassetid://" .. 139355937412302
 	local Prefabs = InsertService:LoadLocalAsset(PrefabsId)
 
 	for _, v in Prefabs:GetDescendants() do
