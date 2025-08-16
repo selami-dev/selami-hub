@@ -3780,7 +3780,7 @@ do
 											) * Vector3.new(1, 0, 1)
 										).Rotation
 
-									if os.clock() - blatantClock > 0.02 then
+									if os.clock() - blatantClock > 0.05 then
 										blatantClock = os.clock()
 										task.spawn(function()
 											if ReplicatedStorage:GetAttribute("LastHitType") ~= "Spike" then
