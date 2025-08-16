@@ -3750,7 +3750,7 @@ do
 							if AutoFarmConfig.Blatant then
 								if isBallOnPlayersSide then
 									if ReplicatedStorage:GetAttribute("LastHitter") == LocalPlayer.Name then
-										rootPart.CFrame = CFrame.new(centerPosition + Vector3.new(0, 6, 0))
+										rootPart.CFrame = CFrame.new(centerPosition)
 											* CFrame.lookAt(
 												centerPosition * Vector3.new(1, 0, 1),
 												(
@@ -3780,7 +3780,7 @@ do
 											) * Vector3.new(1, 0, 1)
 										).Rotation
 
-									if ball.Position.Y > 5 then
+									if ball.Position.Y > 6 then
 										if os.clock() - blatantClock > 0.1 then
 											blatantClock = os.clock()
 											task.spawn(function()
