@@ -861,6 +861,7 @@ do
 		)
 	end
 
+	--[[
 	do
 		local WALKSPEED_VALUE = 26
 		local ENABLED = true
@@ -900,7 +901,7 @@ do
 					charAdded(LocalPlayer.Character)
 				end
 			else
-				if currentHum then
+				if currentHum and defaultWalkspeed then
 					currentHum.WalkSpeed = defaultWalkspeed
 				end
 				connections:Cleanup()
@@ -943,6 +944,7 @@ do
 			})
 		)
 	end
+	]]
 
 	local AttributesNode = CharacterTab:TreeNode({
 		Title = "Attributes",
