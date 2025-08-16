@@ -1,4 +1,4 @@
-local VERSION = "1.0.0"
+local VERSION = "2.0.0"
 task.wait(1)
 
 -->> LDSTN
@@ -620,8 +620,6 @@ do
 
 				BallData.Acceleration = acceleration
 				BallData.Jerk = calculatedJerk
-
-				print("Jerk: " .. tostring(calculatedJerk))
 			end
 
 			BallData.ServerVelocity = data.velocity
@@ -1813,7 +1811,7 @@ do
 				Maximum = 100,
 				Callback = function(self, Value)
 					value = Value / 100
-					print(value)
+					--print(value)
 				end,
 			})
 		)
