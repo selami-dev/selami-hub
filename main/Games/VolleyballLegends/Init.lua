@@ -1,4 +1,4 @@
-local VERSION = "2.5.5"
+local VERSION = "2.6"
 task.wait(1)
 
 -->> LDSTN
@@ -1640,6 +1640,114 @@ do
 		hooks:Add(function()
 			CustomAnimations.Enabled = false
 		end)
+	end
+
+	local EffectsFolder = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Effects")
+
+	-- Tsh Spike Effect
+	if hookfunction and newcclosure then
+		local Enabled = false
+	end
+
+	-- Effect Re-Color
+	do
+		local Enabled = false
+		local Hue = 0
+
+		local Particles = {}
+		local DefaultColors = {}
+
+		local function SetEmittersHue(particles: { ParticleEmitter }, hueDegrees: number)
+			-- Convert hue to 0–1
+			local targetHue = (hueDegrees % 360) / 360
+
+			for _, emitter in particles do
+				if emitter and emitter:IsA("ParticleEmitter") and emitter.Color then
+					local oldSequence = emitter.Color
+					local newKeypoints = {}
+
+					for _, keypoint in oldSequence.Keypoints do
+						-- Extract current HSV
+						local _, s, v = keypoint.Value:ToHSV()
+						-- Set hue to target
+						local newColor = Color3.fromHSV(targetHue, s, v)
+						table.insert(newKeypoints, ColorSequenceKeypoint.new(keypoint.Time, newColor))
+					end
+
+					-- Apply the new ColorSequence
+					emitter.Color = ColorSequence.new(newKeypoints)
+				end
+			end
+		end
+
+		local function update()
+			if Enabled then
+				SetEmittersHue(Particles, Hue)
+			else
+				for _, v in Particles do
+					v.Color = DefaultColors[v]
+				end
+			end
+		end
+
+		local function loadParticle(v)
+			if not v:IsA("ParticleEmitter") then
+				return
+			end
+
+			table.insert(Particles, v)
+			DefaultColors[v] = v.Color
+
+			if Enabled then
+				SetEmittersHue({ v }, Hue)
+			end
+		end
+
+		for _, v in EffectsFolder:GetDescendants() do
+			loadParticle(v)
+		end
+
+		hooks:Add(EffectsFolder.DescendantAdded:Connect(loadParticle))
+		hooks:Add(function()
+			Enabled = false
+			update()
+			Particles = nil
+			DefaultColors = nil
+		end)
+
+		-- Interface
+		local CustomEffectColorNode = CosmeticsTab:TreeNode({
+			Title = "Effect Re-Color",
+			Collapsed = false,
+		})
+
+		ConfigHandler:AddElement(
+			"CustomEffectColorEnabled",
+			CustomEffectColorNode:Checkbox({
+				Label = "Enabled",
+				Value = Enabled,
+				Callback = function(_, v)
+					Enabled = v
+					update()
+				end,
+			})
+		)
+
+		ConfigHandler:AddElement(
+			"EffectReColorHueSlider",
+			CustomEffectColorNode:SliderInt({
+				Label = "Hue",
+				Value = Hue,
+				Minimum = 0,
+				Maximum = 360,
+				Callback = function(self, Value)
+					Hue = math.round(Value)
+					if Enabled then
+						update()
+					end
+				end,
+			})
+		)
 	end
 end
 
