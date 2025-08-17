@@ -1,4 +1,4 @@
-local VERSION = "2.2.0"
+local VERSION = "2.5"
 task.wait(1)
 
 -->> LDSTN
@@ -505,7 +505,7 @@ do
 		-- Get court information
 		local courtPosition = CourtPart.Position
 		local courtSize = CourtPart.Size
-		local ballRadius = GameModule.Physics.Radius
+		local ballRadius = 1
 
 		-- Check if landing position is within court boundaries on X axis (with radius)
 		local isInXBounds = Position.X > (courtPosition.X - courtSize.X / 2 - ballRadius)
@@ -522,7 +522,7 @@ do
 	BallTrajectory.ClampVectorToCourt = function(origin: Vector3, target: Vector3)
 		local courtPosition = CourtPart.Position
 		local courtSize = CourtPart.Size
-		local ballRadius = GameModule.Physics.Radius
+		local ballRadius = 1
 
 		-- Calculate court bounds
 		local minX = courtPosition.X - courtSize.X / 2 - ballRadius
@@ -1117,7 +1117,9 @@ local rarityModule = require(ReplicatedStorage.Content.Rarity)
 local function colorFromRarity(rarity)
 	return rarityModule.Data[rarity].Color
 end
---[[
+
+---------------
+
 do
 	local CosmeticsTab = Window:CollapsingHeader({
 		Title = "✨ Cosmetics",
@@ -1450,56 +1452,58 @@ do
 			SELECTED_EFFECT = effect
 		end, CustomScoreNode)
 
-		local found = false
-		local clc = os.clock()
-		while not found and os.clock() - clc < 2 do
-			local protos = debug.getprotos(gameController.BindToEffects)
+		task.spawn(function()
+			local found = false
+			local clc = os.clock()
+			while not found and os.clock() - clc < 2 do
+				local protos = debug.getprotos(gameController.BindToEffects)
 
-			for i, proto in protos do
-				if iscclosure(proto) then
-					continue
-				end
-				local constants = debug.getconstants(proto)
-				if table.find(constants, "GroundHit1") then
-					local miniFound = false
-					while not miniFound and os.clock() - clc < 2 do
-						local realProtos = debug.getproto(gameController.BindToEffects, i, true)
-						if #realProtos > 0 then
-							miniFound = true
-							for _, realProto in realProtos do
-								local old
-								old = hookfunction(
-									realProto,
-									newcclosure(function(...)
-										--print("IDFC IDFC")
-										local args = { ... }
-										--warn(HaikyuuRaper:Serialize(args))
+				for i, proto in protos do
+					if iscclosure(proto) then
+						continue
+					end
+					local constants = debug.getconstants(proto)
+					if table.find(constants, "GroundHit1") then
+						local miniFound = false
+						while not miniFound and os.clock() - clc < 2 do
+							local realProtos = debug.getproto(gameController.BindToEffects, i, true)
+							if #realProtos > 0 then
+								miniFound = true
+								for _, realProto in realProtos do
+									local old
+									old = hookfunction(
+										realProto,
+										newcclosure(function(...)
+											--print("IDFC IDFC")
+											local args = { ... }
+											--warn(HaikyuuRaper:Serialize(args))
 
-										if ENABLED and not args[3] then
-											if args[6] == LocalPlayer.Character or ENABLED_FOR_OTHERS then
-												if SELECTED_EFFECT then
-													args[5] = SELECTED_EFFECT
+											if ENABLED and not args[3] then
+												if args[6] == LocalPlayer.Character or ENABLED_FOR_OTHERS then
+													if SELECTED_EFFECT then
+														args[5] = SELECTED_EFFECT
+													end
 												end
 											end
-										end
 
-										return old(unpack(args))
-									end)
-								)
+											return old(unpack(args))
+										end)
+									)
+								end
+							else
+								task.wait()
 							end
-						else
-							task.wait()
 						end
+						found = true
+						break
 					end
-					found = true
-					break
+				end
+
+				if not found then
+					task.wait()
 				end
 			end
-
-			if not found then
-				task.wait()
-			end
-		end
+		end)
 
 		hooks:Add(function()
 			ENABLED = false
@@ -1507,8 +1511,121 @@ do
 			SELECTED_EFFECT = nil
 		end)
 	end
+
+	-- Custom Animations Section
+	if hookfunction and newcclosure then
+		local CustomAnimations = {
+			Enabled = false,
+			Animations = {
+				-- FORMAT: [AnimationName] = {Enabled: boolean, Selected: string | nil, Options: {}}
+			},
+		}
+
+		-- Initialize the animations & etc.
+		local AllStyles = StylePath:GetChildren()
+		for _, styleModule in AllStyles do
+			local style = require(styleModule)
+			local animations = style.Metadata and style.Metadata.Animations
+			if not animations then
+				continue
+			end
+			for Name, AnimationData in animations do
+				if not CustomAnimations.Animations[Name] then
+					CustomAnimations.Animations[Name] = {
+						Enabled = true,
+						Selected = nil,
+						Options = {},
+					}
+				end
+
+				local rarityColor = colorFromRarity(style.Rarity)
+				local coloredDisplay = string.format(
+					'<font color="rgb(%d,%d,%d)">%s</font>',
+					math.floor(rarityColor.R * 255),
+					math.floor(rarityColor.G * 255),
+					math.floor(rarityColor.B * 255),
+					style.DisplayName or styleModule.Name
+				)
+
+				CustomAnimations.Animations[Name].Options[coloredDisplay] = AnimationData
+			end
+		end
+
+		-- Load the Interface
+		local CustomAnimNode = CosmeticsTab:TreeNode({
+			Title = "Custom Animations",
+			Collapsed = false,
+		})
+
+		ConfigHandler:AddElement(
+			"CustomAnimsEnabled",
+			CustomAnimNode:Checkbox({
+				Label = "Enabled",
+				Value = CustomAnimations.Enabled,
+				Callback = function(_, v)
+					CustomAnimations.Enabled = v
+				end,
+			})
+		)
+
+		for Name, AnimationData in CustomAnimations.Animations do
+			local Row = CustomAnimNode:Row()
+
+			ConfigHandler:AddElement(
+				"CustomAnims" .. Name .. "Enabled",
+				Row:Checkbox({
+					Label = "",
+					Value = AnimationData.Enabled,
+					Callback = function(_, v)
+						AnimationData.Enabled = v
+					end,
+				})
+			)
+
+			local Combo = Row:Combo({
+				Label = Name,
+				Items = AnimationData.Options,
+				Callback = function(_, item)
+					AnimationData.Selected = item
+				end,
+			})
+			ConfigHandler:AddElement("CustomAnims" .. Name .. "Combo", Combo)
+		end
+
+		-- Actual Logic
+		task.spawn(function()
+			local AnimationController =
+				require(ReplicatedFirst:WaitForChild("Controllers"):WaitForChild("AnimationController"))
+
+			while not AnimationController.StyleAnimations do
+				task.wait()
+			end
+
+			local old
+			old = hookfunction(
+				AnimationController.StyleAnimations.get,
+				newcclosure(function(...)
+					local args = { ... }
+					-- Modify the arguments as needed
+					if CustomAnimations.Enabled and rawequal(args[1], AnimationController.StyleAnimations) then
+						normalResult = old(...) or {}
+						for Name, AnimationData in CustomAnimations.Animations do
+							if AnimationData.Enabled and AnimationData.Selected then
+								normalResult[Name] = AnimationData.Selected
+							end
+						end
+						return normalResult
+					end
+					return old(...)
+				end)
+			)
+		end)
+
+		hooks:Add(function()
+			CustomAnimations.Enabled = false
+		end)
+	end
 end
-]]
 
 local currentCam = workspace.CurrentCamera
 if currentCam then
@@ -2622,7 +2739,7 @@ do
 
 				local courtPosition = CourtPart.Position
 				local courtSize = CourtPart.Size
-				local ballRadius = GameModule.Physics.Radius
+				local ballRadius = 1
 
 				-- Check if the last hitter is not on the same team as the player
 				local lastHitterPlayer = lastHitter and Players:FindFirstChild(lastHitter) or nil
@@ -4070,7 +4187,7 @@ do
 					-- Get court information
 					local courtPosition = CourtPart.Position
 					local courtSize = CourtPart.Size
-					local ballRadius = GameModule.Physics.Radius
+					local ballRadius = 1
 
 					-- Check if landing position is within court boundaries on X axis (with radius)
 					local isInXBounds = landingPosition.X > (courtPosition.X - courtSize.X / 2 - ballRadius)
