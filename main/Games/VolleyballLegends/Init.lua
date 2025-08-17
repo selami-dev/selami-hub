@@ -1,4 +1,4 @@
-local VERSION = "2.6"
+local VERSION = "2.6.1"
 task.wait(1)
 
 -->> LDSTN
@@ -1654,52 +1654,69 @@ do
 		local Enabled = false
 		local Hue = 0
 
-		local Particles = {}
+		local Effects = {}
 		local DefaultColors = {}
 
-		local function SetEmittersHue(particles: { ParticleEmitter }, hueDegrees: number)
-			-- Convert hue to 0–1
+		local function SetObjectsHue(objects: { Instance }, hueDegrees: number)
+			-- Convert to normalized hue (0–1)
 			local targetHue = (hueDegrees % 360) / 360
 
-			for _, emitter in particles do
-				if emitter and emitter:IsA("ParticleEmitter") and emitter.Color then
-					local oldSequence = emitter.Color
-					local newKeypoints = {}
+			for _, obj in objects do
+				if not obj then
+					continue
+				end
 
-					for _, keypoint in oldSequence.Keypoints do
-						-- Extract current HSV
-						local _, s, v = keypoint.Value:ToHSV()
-						-- Set hue to target
-						local newColor = Color3.fromHSV(targetHue, s, v)
-						table.insert(newKeypoints, ColorSequenceKeypoint.new(keypoint.Time, newColor))
+				-- BasePart (Color3)
+				if obj:IsA("BasePart") then
+					local _, s, v = obj.Color:ToHSV()
+					obj.Color = Color3.fromHSV(targetHue, s, v)
+
+				-- ParticleEmitter / Beam / Trail (ColorSequence)
+				elseif obj:IsA("ParticleEmitter") or obj:IsA("Beam") or obj:IsA("Trail") then
+					if obj.Color then
+						local newKeypoints = {}
+						for _, keypoint in obj.Color.Keypoints do
+							local _, s, v = keypoint.Value:ToHSV()
+							local newColor = Color3.fromHSV(targetHue, s, v)
+							table.insert(newKeypoints, ColorSequenceKeypoint.new(keypoint.Time, newColor))
+						end
+						obj.Color = ColorSequence.new(newKeypoints)
 					end
 
-					-- Apply the new ColorSequence
-					emitter.Color = ColorSequence.new(newKeypoints)
+				-- Decal / Texture (Color3)
+				elseif obj:IsA("Decal") or obj:IsA("Texture") then
+					local _, s, v = obj.Color:ToHSV()
+					obj.Color = Color3.fromHSV(targetHue, s, v)
 				end
 			end
 		end
 
 		local function update()
 			if Enabled then
-				SetEmittersHue(Particles, Hue)
+				SetObjectsHue(Effects, Hue)
 			else
-				for _, v in Particles do
+				for _, v in Effects do
 					v.Color = DefaultColors[v]
 				end
 			end
 		end
 
 		local function loadParticle(v)
-			if not v:IsA("ParticleEmitter") then
+			if
+				not v:IsA("ParticleEmitter")
+				and not v:IsA("Beam")
+				and not v:IsA("Trail")
+				and not v:IsA("Decal")
+				and not v:IsA("Texture")
+			then
 				return
 			end
 
-			table.insert(Particles, v)
+			table.insert(Effects, v)
 			DefaultColors[v] = v.Color
 
 			if Enabled then
-				SetEmittersHue({ v }, Hue)
+				SetObjectsHue({ v }, Hue)
 			end
 		end
 
@@ -1711,7 +1728,7 @@ do
 		hooks:Add(function()
 			Enabled = false
 			update()
-			Particles = nil
+			Effects = nil
 			DefaultColors = nil
 		end)
 
