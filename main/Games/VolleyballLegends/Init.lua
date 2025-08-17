@@ -1,4 +1,4 @@
-local VERSION = "2.6.2"
+local VERSION = "2.6.1"
 task.wait(1)
 
 -->> LDSTN
@@ -1682,11 +1682,6 @@ do
 						end
 						obj.Color = ColorSequence.new(newKeypoints)
 					end
-
-				-- Decal / Texture (Color3)
-				elseif obj:IsA("Decal") or obj:IsA("Texture") then
-					local _, s, v = obj.Color3:ToHSV()
-					obj.Color3 = Color3.fromHSV(targetHue, s, v)
 				end
 			end
 		end
@@ -1696,28 +1691,18 @@ do
 				SetObjectsHue(Effects, Hue)
 			else
 				for _, v in Effects do
-					if v:IsA("Decal") or v:IsA("Texture") then
-						v.Color3 = DefaultColors[v]
-					else
-						v.Color = DefaultColors[v]
-					end
+					v.Color = DefaultColors[v]
 				end
 			end
 		end
 
 		local function loadParticle(v)
-			if
-				not v:IsA("ParticleEmitter")
-				and not v:IsA("Beam")
-				and not v:IsA("Trail")
-				and not v:IsA("Decal")
-				and not v:IsA("Texture")
-			then
+			if not v:IsA("ParticleEmitter") and not v:IsA("Beam") and not v:IsA("Trail") then
 				return
 			end
 
 			table.insert(Effects, v)
-			DefaultColors[v] = (v:IsA("Decal") or v:IsA("Texture") and v.Color3) or v.Color
+			DefaultColors[v] = v.Color
 
 			if Enabled then
 				SetObjectsHue({ v }, Hue)
