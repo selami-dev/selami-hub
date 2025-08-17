@@ -1,4 +1,4 @@
-local VERSION = "2.5.01"
+local VERSION = "2.5.5"
 task.wait(1)
 
 -->> LDSTN
@@ -1519,8 +1519,12 @@ do
 			Animations = {
 				-- FORMAT: [AnimationName] = {Enabled: boolean, Selected: string | nil, Options: {}}
 			},
+			ChangeCount = 0,
 		}
 
+		local function somethingChanged()
+			CustomAnimations.ChangeCount += 1
+		end
 		-- Initialize the animations & etc.
 		local AllStyles = StylePath:GetChildren()
 		for _, styleModule in AllStyles do
@@ -1564,6 +1568,7 @@ do
 				Value = CustomAnimations.Enabled,
 				Callback = function(_, v)
 					CustomAnimations.Enabled = v
+					somethingChanged()
 				end,
 			})
 		)
@@ -1578,6 +1583,7 @@ do
 					Value = AnimationData.Enabled,
 					Callback = function(_, v)
 						AnimationData.Enabled = v
+						somethingChanged()
 					end,
 				})
 			)
@@ -1592,6 +1598,7 @@ do
 				Items = AnimationData.Options,
 				Callback = function(_, item)
 					AnimationData.Selected = AnimationData.Options[item]
+					somethingChanged()
 				end,
 			})
 			ConfigHandler:AddElement("CustomAnims" .. Name .. "Combo", Combo)
@@ -1619,7 +1626,7 @@ do
 								normalResult[Name] = AnimationData.Selected
 							end
 						end
-						normalResult.Id = "Rintaro"
+						normalResult.Id = tostring(CustomAnimations.ChangeCount)
 						warn(HaikyuuRaper:Serialize(normalResult, {
 							Prettify = true,
 						}))
