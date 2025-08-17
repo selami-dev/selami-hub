@@ -1582,11 +1582,16 @@ do
 				})
 			)
 
+			local OptionNames = {}
+			for i, v in AnimationData.Options do
+				table.insert(OptionNames, i)
+			end
+
 			local Combo = Row:Combo({
 				Label = Name,
 				Items = AnimationData.Options,
 				Callback = function(_, item)
-					AnimationData.Selected = item
+					AnimationData.Selected = AnimationData.Options[item]
 				end,
 			})
 			ConfigHandler:AddElement("CustomAnims" .. Name .. "Combo", Combo)
@@ -1601,14 +1606,14 @@ do
 				task.wait()
 			end
 
-			local old
+			local old = nil
 			old = hookfunction(
 				AnimationController.StyleAnimations.get,
 				newcclosure(function(...)
 					local args = { ... }
 					-- Modify the arguments as needed
 					if CustomAnimations.Enabled and rawequal(args[1], AnimationController.StyleAnimations) then
-						normalResult = old(...) or {}
+						normalResult = (old(...)) or {}
 						for Name, AnimationData in CustomAnimations.Animations do
 							if AnimationData.Enabled and AnimationData.Selected then
 								normalResult[Name] = AnimationData.Selected
