@@ -1,4 +1,4 @@
-local VERSION = "2.6"
+local VERSION = "2.6.1"
 task.wait(1)
 
 -->> LDSTN
@@ -1662,7 +1662,7 @@ do
 			local targetHue = (hueDegrees % 360) / 360
 
 			for _, emitter in particles do
-				if emitter and emitter:IsA("ParticleEmitter") and emitter.Color then
+				if emitter and emitter.Color then
 					local oldSequence = emitter.Color
 					local newKeypoints = {}
 
@@ -3168,6 +3168,47 @@ do
 
 		hooks:Add(function()
 			ENABLED = false
+		end)
+	end
+
+	-- Spoof Tilt
+	if hookmetamethod then
+		local Enabled = true
+
+		local old
+		old = hookmetamethod(game, "__namecall", function(self, ...)
+			local args = { ... }
+			if Enabled and not checkcaller() then
+				if
+					getnamecallmethod() == "InvokeServer"
+					and typeof(self) == "Instance"
+					and self.ClassName == "RemoteFunction"
+					and self.Name == "UpdateTilt"
+				then
+					args[1] = Vector3.yAxis
+				end
+			end
+			return old(self, table.unpack(args))
+		end)
+
+		local SpoofTiltNode = InternalTab:TreeNode({
+			Title = "Spoof Tilt",
+			Collapsed = false,
+		})
+
+		ConfigHandler:AddElement(
+			"SpoofTiltToggle",
+			SpoofTiltNode:Checkbox({
+				Label = "Enabled",
+				Value = Enabled,
+				Callback = function(_, v)
+					Enabled = v
+				end,
+			})
+		)
+
+		hooks:Add(function()
+			Enabled = false
 		end)
 	end
 end
