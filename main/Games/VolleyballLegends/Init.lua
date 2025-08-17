@@ -1,4 +1,4 @@
-local VERSION = "2.6.1"
+local VERSION = "2.6.2"
 task.wait(1)
 
 -->> LDSTN
@@ -1685,8 +1685,8 @@ do
 
 				-- Decal / Texture (Color3)
 				elseif obj:IsA("Decal") or obj:IsA("Texture") then
-					local _, s, v = obj.Color:ToHSV()
-					obj.Color = Color3.fromHSV(targetHue, s, v)
+					local _, s, v = obj.Color3:ToHSV()
+					obj.Color3 = Color3.fromHSV(targetHue, s, v)
 				end
 			end
 		end
@@ -1696,7 +1696,11 @@ do
 				SetObjectsHue(Effects, Hue)
 			else
 				for _, v in Effects do
-					v.Color = DefaultColors[v]
+					if v:IsA("Decal") or v:IsA("Texture") then
+						v.Color3 = DefaultColors[v]
+					else
+						v.Color = DefaultColors[v]
+					end
 				end
 			end
 		end
@@ -1713,7 +1717,7 @@ do
 			end
 
 			table.insert(Effects, v)
-			DefaultColors[v] = v.Color
+			DefaultColors[v] = (v:IsA("Decal") or v:IsA("Texture") and v.Color3) or v.Color
 
 			if Enabled then
 				SetObjectsHue({ v }, Hue)
