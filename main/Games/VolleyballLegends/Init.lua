@@ -1614,6 +1614,10 @@ do
 								normalResult[Name] = AnimationData.Selected
 							end
 						end
+						normalResult.Id = "Rintaro"
+						warn(HaikyuuRaper:Serialize(normalResult, {
+							Prettify = true,
+						}))
 						return normalResult
 					end
 					return old(...)
