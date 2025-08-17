@@ -1595,7 +1595,7 @@ do
 
 			local Combo = Row:Combo({
 				Label = Name,
-				Items = AnimationData.Options,
+				Items = OptionNames,
 				Callback = function(_, item)
 					AnimationData.Selected = AnimationData.Options[item]
 					somethingChanged()
