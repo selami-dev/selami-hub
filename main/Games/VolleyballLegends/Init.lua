@@ -1,4 +1,4 @@
-local VERSION = "2.7.5"
+local VERSION = "2.8"
 task.wait(1)
 
 -->> LDSTN
@@ -1652,6 +1652,7 @@ do
 	-- Effect Re-Color
 	do
 		local Enabled = false
+		local ColorizeMode = false
 		local Hue = 0
 
 		local Objects = {}
@@ -1659,7 +1660,18 @@ do
 
 		-- Utility: shift/set hue on Color3
 		local function setHueColor3(c: Color3, targetHue: number): Color3
+			local function clampColor3(c)
+				local r = math.clamp(c.R, 0, 1)
+				local g = math.clamp(c.G, 0, 1)
+				local b = math.clamp(c.B, 0, 1)
+				return Color3.new(r, g, b)
+			end
+			c = clampColor3(c)
+
 			local _, s, v = c:ToHSV()
+			if ColorizeMode then
+				s = 1 -- max saturation
+			end
 			return Color3.fromHSV(targetHue, s, v)
 		end
 
@@ -1668,6 +1680,9 @@ do
 			local newKeypoints = {}
 			for _, keypoint in seq.Keypoints do
 				local _, s, v = keypoint.Value:ToHSV()
+				if ColorizeMode then
+					s = 1
+				end
 				local newColor = Color3.fromHSV(targetHue, s, v)
 				table.insert(newKeypoints, ColorSequenceKeypoint.new(keypoint.Time, newColor))
 			end
@@ -1774,6 +1789,18 @@ do
 				Value = Enabled,
 				Callback = function(_, v)
 					Enabled = v
+					update()
+				end,
+			})
+		)
+
+		ConfigHandler:AddElement(
+			"CustomEffectColorColorizeEnabled",
+			CustomEffectColorNode:Checkbox({
+				Label = "Enabled",
+				Value = ColorizeMode,
+				Callback = function(_, v)
+					ColorizeMode = v
 					update()
 				end,
 			})
