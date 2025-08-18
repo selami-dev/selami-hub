@@ -2536,7 +2536,7 @@ do
 			SanuTiltNode:SliderInt({
 				Label = "Max Angle",
 				Value = MAX_ANGLE,
-				Minimum = 0,
+				Minimum = -10,
 				Maximum = 90,
 				Callback = function(self, Value)
 					MAX_ANGLE = Value
