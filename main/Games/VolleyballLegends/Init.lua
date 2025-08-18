@@ -1642,7 +1642,10 @@ do
 		end)
 	end
 
-	local EffectsFolder = workspace:WaitForChild("Effects")
+	local EffectFolders = {
+		Effects = ReplicatedStorage.Assets.Effects,
+		ScoreEffects = ReplicatedStorage.Assets.ScoreEffect,
+	}
 
 	-- Tsh Spike Effect
 	if hookfunction and newcclosure then
@@ -1655,6 +1658,7 @@ do
 		local ColorizeMode = false
 		local Hue = 0
 
+		local Objects = {}
 		local DefaultColors = {}
 
 		-- Utility: shift/set hue on Color3
@@ -1728,13 +1732,6 @@ do
 
 		-- Main update loop
 		local function update()
-			local Objects = {}
-			for obj, defColor in DefaultColors do
-				if not defColor then
-					continue
-				end
-				table.insert(Objects, obj)
-			end
 			for _, obj in Objects do
 				if Enabled then
 					applyHue(obj, Hue)
@@ -1761,6 +1758,7 @@ do
 			end
 
 			if save then
+				table.insert(Objects, v)
 				DefaultColors[v] = save
 				if Enabled then
 					applyHue(v, Hue)
@@ -1769,17 +1767,18 @@ do
 		end
 
 		-- Initial load
-		for _, v in EffectsFolder:GetDescendants() do
-			loadObject(v)
+		for _, EffectsFolder in EffectFolders do
+			for _, v in EffectsFolder:GetDescendants() do
+				loadObject(v)
+			end
+
+			hooks:Add(EffectsFolder.DescendantAdded:Connect(loadObject))
 		end
 
-		hooks:Add(EffectsFolder.DescendantAdded:Connect(loadObject))
-		hooks:Add(EffectsFolder.DescendantRemoving:Connect(function(v)
-			DefaultColors[v] = nil
-		end))
 		hooks:Add(function()
 			Enabled = false
 			update()
+			Objects = nil
 			DefaultColors = nil
 		end)
 
