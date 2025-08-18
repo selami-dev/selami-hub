@@ -1,4 +1,4 @@
-local VERSION = "2.8"
+local VERSION = "2.8.5"
 task.wait(1)
 
 -->> LDSTN
@@ -3955,7 +3955,7 @@ do
 			local IS_FROM_SERVE = false
 			local ServeClock = os.clock()
 
-			jan:Add(ReplicatedStorage:GetAttributeChangedSignal("ServedByPlayer")):Connect(function()
+			jan:Add(ReplicatedStorage:GetAttributeChangedSignal("ServedByPlayer"):Connect(function()
 				local ServedByWho = ReplicatedStorage:GetAttribute("ServedByPlayer")
 				if not ServedByWho then
 					return
@@ -3973,7 +3973,7 @@ do
 				end
 
 				IS_FROM_SERVE = false
-			end)
+			end))
 
 			jan:Add(task.defer(function()
 				while AutoFarmConfig.Enabled do
