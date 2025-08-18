@@ -1,4 +1,4 @@
-local VERSION = "2.6.1"
+local VERSION = "2.7.5"
 task.wait(1)
 
 -->> LDSTN
@@ -1654,64 +1654,110 @@ do
 		local Enabled = false
 		local Hue = 0
 
-		local Particles = {}
+		local Objects = {}
 		local DefaultColors = {}
 
-		local function SetEmittersHue(particles: { ParticleEmitter }, hueDegrees: number)
-			-- Convert hue to 0–1
+		-- Utility: shift/set hue on Color3
+		local function setHueColor3(c: Color3, targetHue: number): Color3
+			local _, s, v = c:ToHSV()
+			return Color3.fromHSV(targetHue, s, v)
+		end
+
+		-- Utility: shift/set hue on ColorSequence
+		local function setHueColorSequence(seq: ColorSequence, targetHue: number): ColorSequence
+			local newKeypoints = {}
+			for _, keypoint in seq.Keypoints do
+				local _, s, v = keypoint.Value:ToHSV()
+				local newColor = Color3.fromHSV(targetHue, s, v)
+				table.insert(newKeypoints, ColorSequenceKeypoint.new(keypoint.Time, newColor))
+			end
+			return ColorSequence.new(newKeypoints)
+		end
+
+		-- Apply hue to supported object types
+		local function applyHue(obj, hueDegrees: number)
 			local targetHue = (hueDegrees % 360) / 360
 
-			for _, emitter in particles do
-				if emitter and emitter.Color then
-					local oldSequence = emitter.Color
-					local newKeypoints = {}
-
-					for _, keypoint in oldSequence.Keypoints do
-						-- Extract current HSV
-						local _, s, v = keypoint.Value:ToHSV()
-						-- Set hue to target
-						local newColor = Color3.fromHSV(targetHue, s, v)
-						table.insert(newKeypoints, ColorSequenceKeypoint.new(keypoint.Time, newColor))
-					end
-
-					-- Apply the new ColorSequence
-					emitter.Color = ColorSequence.new(newKeypoints)
-				end
+			if obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") then
+				obj.Color = setHueColorSequence(DefaultColors[obj], targetHue)
+			elseif obj:IsA("BasePart") then
+				obj.Color = setHueColor3(DefaultColors[obj], targetHue)
+			elseif obj:IsA("Decal") or obj:IsA("Texture") then
+				obj.Color3 = setHueColor3(DefaultColors[obj], targetHue)
+			elseif obj:IsA("ImageLabel") or obj:IsA("ImageButton") then
+				obj.ImageColor3 = setHueColor3(DefaultColors[obj], targetHue)
+			elseif obj:IsA("Highlight") then
+				local old = DefaultColors[obj]
+				obj.FillColor = setHueColor3(old.FillColor, targetHue)
+				obj.OutlineColor = setHueColor3(old.OutlineColor, targetHue)
 			end
 		end
 
-		local function update()
-			if Enabled then
-				SetEmittersHue(Particles, Hue)
-			else
-				for _, v in Particles do
-					v.Color = DefaultColors[v]
-				end
-			end
-		end
-
-		local function loadParticle(v)
-			if not v:IsA("ParticleEmitter") then
+		local function restore(obj)
+			if not DefaultColors[obj] then
 				return
 			end
 
-			table.insert(Particles, v)
-			DefaultColors[v] = v.Color
-
-			if Enabled then
-				SetEmittersHue({ v }, Hue)
+			if obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") then
+				obj.Color = DefaultColors[obj]
+			elseif obj:IsA("BasePart") then
+				obj.Color = DefaultColors[obj]
+			elseif obj:IsA("Decal") or obj:IsA("Texture") then
+				obj.Color3 = DefaultColors[obj]
+			elseif obj:IsA("ImageLabel") or obj:IsA("ImageButton") then
+				obj.ImageColor3 = DefaultColors[obj]
+			elseif obj:IsA("Highlight") then
+				obj.FillColor = DefaultColors[obj].FillColor
+				obj.OutlineColor = DefaultColors[obj].OutlineColor
 			end
 		end
 
-		for _, v in EffectsFolder:GetDescendants() do
-			loadParticle(v)
+		-- Main update loop
+		local function update()
+			for _, obj in Objects do
+				if Enabled then
+					applyHue(obj, Hue)
+				else
+					restore(obj)
+				end
+			end
 		end
 
-		hooks:Add(EffectsFolder.DescendantAdded:Connect(loadParticle))
+		-- Register supported objects
+		local function loadObject(v)
+			local save
+
+			if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Beam") then
+				save = v.Color
+			elseif v:IsA("BasePart") then
+				save = v.Color
+			elseif v:IsA("Decal") or v:IsA("Texture") then
+				save = v.Color3
+			elseif v:IsA("ImageLabel") or v:IsA("ImageButton") then
+				save = v.ImageColor3
+			elseif v:IsA("Highlight") then
+				save = { FillColor = v.FillColor, OutlineColor = v.OutlineColor }
+			end
+
+			if save then
+				table.insert(Objects, v)
+				DefaultColors[v] = save
+				if Enabled then
+					applyHue(v, Hue)
+				end
+			end
+		end
+
+		-- Initial load
+		for _, v in EffectsFolder:GetDescendants() do
+			loadObject(v)
+		end
+
+		hooks:Add(EffectsFolder.DescendantAdded:Connect(loadObject))
 		hooks:Add(function()
 			Enabled = false
 			update()
-			Particles = nil
+			Objects = nil
 			DefaultColors = nil
 		end)
 
@@ -3879,6 +3925,29 @@ do
 
 		if enabled then
 			-->> Enable
+			local IS_FROM_SERVE = false
+			local ServeClock = os.clock()
+
+			jan:Add(ReplicatedStorage:GetAttributeChangedSignal("ServedByPlayer")):Connect(function()
+				local ServedByWho = ReplicatedStorage:GetAttribute("ServedByPlayer")
+				if not ServedByWho then
+					return
+				end
+
+				IS_FROM_SERVE = ServedByWho
+				ServeClock = os.clock()
+
+				while ReplicatedStorage:GetAttribute("LastHitter") ~= ServedByWho do
+					ReplicatedStorage:GetAttributeChangedSignal("LastHitter"):Wait()
+				end
+
+				while ReplicatedStorage:GetAttribute("LastHitter") == ServedByWho do
+					ReplicatedStorage:GetAttributeChangedSignal("LastHitter"):Wait()
+				end
+
+				IS_FROM_SERVE = false
+			end)
+
 			jan:Add(task.defer(function()
 				while AutoFarmConfig.Enabled do
 					-->> wait for round start
@@ -3895,7 +3964,8 @@ do
 						LocalPlayer:GetPropertyChangedSignal("Team"):Connect(function()
 							if not LocalPlayer.Team then
 								while ReplicatedStorage:GetAttribute("RoundState") ~= 1 do
-									if getInRound() then
+									getInRound()
+									if LocalPlayer.Team then
 										return
 									end
 								end
@@ -3917,7 +3987,7 @@ do
 							if LocalPlayer:GetAttribute("IsServing") then
 								local args = {
 									Vector3.new(0, 0, 0),
-									0.5,
+									1,
 								}
 								game:GetService("ReplicatedStorage")
 									:WaitForChild("Packages")
@@ -4062,7 +4132,17 @@ do
 											) * Vector3.new(1, 0, 1)
 										).Rotation
 
-									if ball.Position.Y > 6 then
+									-- If we are the one who served, we can just wait for the ball to come
+									if IS_FROM_SERVE == LocalPlayer.Name then
+										if ball.Position.Y < 15 then
+											continue
+										end
+									end
+
+									if
+										(IS_FROM_SERVE == LocalPlayer.Name or not IS_FROM_SERVE)
+										and ball.Position.Y > 6
+									then
 										if os.clock() - blatantClock > 0.1 then
 											blatantClock = os.clock()
 											task.spawn(function()
