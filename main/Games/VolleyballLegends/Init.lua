@@ -4168,7 +4168,7 @@ do
 
 									if
 										(IS_FROM_SERVE == LocalPlayer.Name or not IS_FROM_SERVE)
-										and ball.Position.Y > 6
+										and ball.Position.Y > 7
 									then
 										if os.clock() - blatantClock > 0.1 then
 											blatantClock = os.clock()
