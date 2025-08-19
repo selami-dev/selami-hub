@@ -1,4 +1,4 @@
-local VERSION = "2.9"
+local VERSION = "3.0.0"
 task.wait(1)
 
 -->> LDSTN
@@ -591,7 +591,7 @@ do
 		return outputData
 	end
 
-	hooks:Add(RunService.Heartbeat:Connect(function(dt)
+	hooks:Add(RunService.RenderStepped:Connect(function(dt)
 		for ID, BallData in Balls do
 			updateBall(BallData)
 		end
@@ -2823,7 +2823,7 @@ do
 		end
 
 		local moveDirectionOverride = nil
-		local latestDiveDir = nil
+		local latestDiveDir: Vector3
 
 		local lastHitter = ReplicatedStorage:GetAttribute("LastHitter")
 		local hitClock = 0
@@ -2882,18 +2882,6 @@ do
 			local ball, landingPosition, timeToLand =
 				BallTrajectory.LastBall, BallTrajectory.LastTrajectory, BallTrajectory.LastTime
 			latestDiveDir = getMoveDirectionToLanding(landingPosition)
-
-			if latestDiveDir and DIVE_ANGLE_ENABLED then
-				local randomAngle = math.random(-DIVE_ANGLE, DIVE_ANGLE)
-				-- Use cos and sin to rotate latestDiveDir by randomAngle (in degrees) around the Y axis
-				local angleRad = math.rad(randomAngle)
-				local cosA = math.cos(angleRad)
-				local sinA = math.sin(angleRad)
-				local x = latestDiveDir.X * cosA - latestDiveDir.Z * sinA
-				local z = latestDiveDir.X * sinA + latestDiveDir.Z * cosA
-				local newDir = Vector3.new(x, latestDiveDir.Y, z).Unit
-				latestDiveDir = newDir
-			end
 
 			if not ENABLED or not (SET_ENABLED or DIVE_ENABLED) then
 				return
@@ -2977,7 +2965,7 @@ do
 				end
 			end
 
-			local playerPing = LocalPlayer:GetNetworkPing()
+			local playerPing = LocalPlayer:GetNetworkPing() * 0.5
 			local ballAcceleration = ball.Acceleration
 			local velocity = ball.Velocity
 			local position = ball.Position
@@ -2998,7 +2986,12 @@ do
 				SET_ENABLED
 				and (
 					(isBallInBox(ballPosition, GameModule.Physics.Radius, setHitboxCFrame, setHitboxSize))
-					or (isBallInBox(position, GameModule.Physics.Radius, setHitboxCFrame, setHitboxSize))
+					or (isBallInBox(
+						ball.Model.PrimaryPart.Position,
+						GameModule.Physics.Radius,
+						setHitboxCFrame,
+						setHitboxSize
+					))
 					or (
 						timeToLand < 0.25 + 0.5 * LocalPlayer:GetNetworkPing()
 						and isBallInBox(landingPosition, GameModule.Physics.Radius, setHitboxCFrame, setHitboxSize)
@@ -3012,8 +3005,22 @@ do
 				return
 			end
 
-			if not DIVE_ENABLED then
-				return
+			do
+				local PlayerLookVector = (character:GetPivot().LookVector * Vector3.new(1, 0, 1)).Unit
+				if PlayerLookVector.Magnitude < 0.1 then
+					return
+				end
+
+				if
+					not DIVE_ENABLED
+					or (
+						DIVE_ANGLE_ENABLED
+						and latestDiveDir
+						and math.abs(math.deg(latestDiveDir:Angle(PlayerLookVector))) > DIVE_ANGLE
+					)
+				then
+					return
+				end
 			end
 
 			-- Calculate dive parameters
