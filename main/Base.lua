@@ -284,7 +284,9 @@ end
 
 function BaseLoader:Notify(title, message, length, hasSound, theme)
 	if SELAMI_HUB.LaunchArgs.NoGui then
-		return
+		return {
+			Destroy = function() end,
+		}
 	end
 	return NotificationClass.new(
 		title,
