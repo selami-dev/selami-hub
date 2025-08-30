@@ -283,6 +283,9 @@ do
 end
 
 function BaseLoader:Notify(title, message, length, hasSound, theme)
+	if SELAMI_HUB.LaunchArgs.NoGui then
+		return
+	end
 	return NotificationClass.new(
 		title,
 		message,
@@ -679,6 +682,9 @@ function BaseLoader:Finalize()
 	self:ConfigTab()
 	self:UnloadTab()
 
+	if SELAMI_HUB.LaunchArgs.NoGui then
+		return
+	end
 	self.window:SetVisible(true)
 end
 
