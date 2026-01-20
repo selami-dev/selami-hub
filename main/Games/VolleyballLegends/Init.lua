@@ -1106,11 +1106,11 @@ do
 		end)
 	end
 
-	attributeModifier("Dive Speed Mult.", "GameDiveSpeedMultiplier", 1.5, 0, 5)
+	attributeModifier("Dive Speed Mult.", "Multiplier_DiveSpeed", 1.5, 0, 5)
 
-	attributeModifier("Jump Power Mult.", "GameJumpPowerMultiplier", 1.15, 0, 5)
+	attributeModifier("Jump Power Mult.", "Multiplier_JumpPower", 1.15, 0, 5)
 
-	attributeModifier("Speed Mult.", "GameSpeedMultiplier", 0.85, 0, 5)
+	attributeModifier("Speed Mult.", "Multiplier_Speed", 0.85, 0, 5)
 end
 
 local rarityModule = require(ReplicatedStorage.Content.Rarity)
