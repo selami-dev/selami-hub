@@ -1375,7 +1375,7 @@ do
 			SELECTED_BALL = ball
 		end, CustomBallNode)
 
-		local networkModule = require(ReplicatedStorage:WaitForChild("network"))
+		local networkModule = require(ReplicatedFirst.Controllers.BallController.Network)
 		local callbackTable = debug.getupvalue(networkModule.BallStream.SetCallback, 1)
 
 		if callbackTable[1] then
