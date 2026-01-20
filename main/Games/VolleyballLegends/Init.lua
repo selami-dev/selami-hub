@@ -82,8 +82,8 @@ local notif1 = HaikyuuRaper:Notify("🏐 Volleyball Legends", "🔁 Loading...",
 
 require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit")).OnStart():await()
 
-if not LocalPlayer:GetAttribute("DataLoaded") then
-	LocalPlayer:GetAttributeChangedSignal("DataLoaded"):Wait()
+if not LocalPlayer:GetAttribute("User_DataLoaded") then
+	LocalPlayer:GetAttributeChangedSignal("User_DataLoaded"):Wait()
 end
 
 local map = workspace:WaitForChild("Map")
@@ -240,8 +240,8 @@ local function zapModule()
 		error("Cannot use the client module on the server!")
 	end
 	local v14 = v1:WaitForChild("ZAP")
-	local u15 = v14:WaitForChild("ZAP_RELIABLE")
-	local v16 = v14:WaitForChild("ZAP_UNRELIABLE")
+	local u15 = v14:WaitForChild("BALL_ZAP_RELIABLE")
+	local v16 = v14:WaitForChild("BALL_ZAP_UNRELIABLE")
 	local v17 = u15:IsA("RemoteEvent")
 	assert(v17, "Expected ZAP_RELIABLE to be a RemoteEvent")
 	local v18 = v16:IsA("UnreliableRemoteEvent")
