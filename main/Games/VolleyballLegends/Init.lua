@@ -14,11 +14,11 @@ do
 			and namecall == "InvokeServer"
 			and typeof(self) == "Instance"
 			and self.ClassName == "RemoteFunction"
-			and self.Name == "Check"
+			and self.Name == "Ping"
 		then
 			local args = table.pack(...)
-			if typeof(args[3]) == "table" then
-				args[3] = {}
+			if typeof(args[2]) == "table" then
+				args[2] = {}
 				warn("Bypassed")
 				return old(self, table.unpack(args))
 			end
