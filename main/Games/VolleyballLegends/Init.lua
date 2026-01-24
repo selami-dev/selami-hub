@@ -1513,6 +1513,7 @@ do
 	end
 
 	-- Custom Animations Section
+	--[[
 	if hookfunction and newcclosure then
 		local CustomAnimations = {
 			Enabled = false,
@@ -1641,6 +1642,7 @@ do
 			CustomAnimations.Enabled = false
 		end)
 	end
+	]]
 
 	local EffectFolders = {
 		Effects = ReplicatedStorage.Assets.Effects,
