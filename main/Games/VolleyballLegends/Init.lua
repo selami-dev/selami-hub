@@ -2830,10 +2830,11 @@ do
 		local lastHitter = ReplicatedStorage:GetAttribute("LastHitter")
 		local hitClock = 0
 
+		hooks:Add(ReplicatedStorage:GetAttributeChangedSignal("LastHitTimeStamp"):Connect(function()
+			hitClock = os.clock()
+		end))
+
 		hooks:Add(ReplicatedStorage:GetAttributeChangedSignal("LastHitter"):Connect(function()
-			if lastHitter then
-				hitClock = os.clock()
-			end
 			lastHitter = ReplicatedStorage:GetAttribute("LastHitter")
 		end))
 
@@ -2911,6 +2912,7 @@ do
 			end
 
 			local deltaClock = os.clock() - hitClock
+
 			if
 				(REACTION_TIME_ENABLED and deltaClock < REACTION_TIME)
 				or (USER_REACTION_TIME_ENABLED and deltaClock > USER_REACTION_TIME + LocalPlayer:GetNetworkPing())
