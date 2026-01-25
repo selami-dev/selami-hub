@@ -2830,7 +2830,7 @@ do
 		local lastHitter = ReplicatedStorage:GetAttribute("LastHitter")
 		local hitClock = 0
 
-		hooks:Add(ReplicatedStorage:GetAttributeChangedSignal("LastHitTimeStamp"):Connect(function()
+		hooks:Add(ReplicatedStorage:GetAttributeChangedSignal("LastHitTimestamp"):Connect(function()
 			hitClock = os.clock()
 		end))
 
