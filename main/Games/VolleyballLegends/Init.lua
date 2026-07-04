@@ -383,7 +383,10 @@ do
 	end))
 
 	local serverUpdateTime = 1 / 60
-	BallStream.SetCallback(function(data)
+	warn(HaikyuuRaper:Serialize({ debug.getupvalues(BallStream.SetCallback) }, { Prettify = true }))
+
+	--[[
+		BallStream.SetCallback(function(data)
 		--warn(Serializer(data, { Prettify = true }))
 		local BallData = Balls[data.ID]
 		if BallData then
@@ -414,6 +417,7 @@ do
 			updateBall(BallData, deltaTime)
 		end
 	end)
+	]]
 
 	BallTrajectory.GetAllBalls = function()
 		return Balls
