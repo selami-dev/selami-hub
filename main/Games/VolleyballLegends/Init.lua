@@ -186,6 +186,8 @@ end
 
 local zapModule = require(game:GetService("ReplicatedFirst").Controllers.BallController.Network)
 local BallStream = zapModule.BallStream
+--[[
+
 
 local BallTrajectory = {}
 do
@@ -417,13 +419,13 @@ do
 			updateBall(BallData, deltaTime)
 		end
 	end)
-	]]
 
 	BallTrajectory.GetAllBalls = function()
 		return Balls
 	end
 end
 
+]]
 -------
 
 do
@@ -1789,6 +1791,9 @@ do
 		end)
 	end
 
+	--[[
+	
+
 	local function isBallInBox(ballPosition, ballRadius, boxCFrame, boxSize)
 		-- Convert ball position to box's local space
 		local localBallPos = boxCFrame:PointToObjectSpace(ballPosition)
@@ -1919,7 +1924,7 @@ do
 				return oldDive(self, ...)
 			end)
 		)
-		]]
+		
 
 		hooks:Add(RunService.Heartbeat:Connect(function()
 			if not LocalPlayer.Team then
@@ -2169,8 +2174,9 @@ do
 			gameController:Dive()
 			setthreadidentity(8)
 			moveDirectionOverride = nil
-			]]
+			
 		end))
+		
 
 		local AutoReceiveNode = InternalTab:TreeNode({
 			Title = "Auto Receive",
@@ -2309,6 +2315,7 @@ do
 			ENABLED = false
 		end)
 	end
+	]]
 
 	-- Spoof Tilt
 	if hookmetamethod then
@@ -2353,6 +2360,9 @@ do
 end
 
 -->> Debug
+--[[
+
+
 do
 	local DebugTab = Window:CollapsingHeader({
 		Title = "🧪 Debug",
@@ -2699,6 +2709,8 @@ do
 		end)
 	end
 end
+
+]]
 
 notif1:Destroy()
 HaikyuuRaper:Finalize()

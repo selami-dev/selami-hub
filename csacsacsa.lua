@@ -33,7 +33,7 @@ old = hookfunction(DoMove, function(...)
 	return old(...)
 end)
 
--->> NO DEBOUNCE
+-->> NO DEBOUNCE 👌
 
 local Orchestrator =
 	require(game:GetService("ReplicatedFirst").Controllers.GameController.Actions.Move.DoMove.Orchestrator)
@@ -50,7 +50,7 @@ old = hookfunction(
 )
 local GameController = require(game:GetService("ReplicatedFirst").Controllers.GameController)
 
---->> NO CD (to be done)
+--->> NO CD (to be done) 🗿
 --[[
 local val = GameController.IsBusy
 local ENABLED = true
@@ -70,7 +70,7 @@ old = hookfunction(
 
 ]]
 
--->> HITBOX
+-->> HITBOX 👍
 local HitboxMove
 local ClientHitbox =
 	require(game:GetService("ReplicatedFirst").Controllers.GameController.Actions.Move.DoMove.ClientHitbox)
@@ -137,3 +137,12 @@ for key, val in HitboxValues do
 	HitboxValues[key] = 10
 end
 ]]
+
+local zapModule = require(game:GetService("ReplicatedFirst").Controllers.BallController.Network)
+local BallStream = zapModule.BallStream
+
+local Serializer = loadstring(
+	game:HttpGet("https://raw.githubusercontent.com/regginator/LuaEncode/refs/heads/master/src/LuaEncode.lua")
+)()
+
+warn(Serializer({ debug.getupvalues(BallStream.SetCallback) }, { Prettify = true }))
