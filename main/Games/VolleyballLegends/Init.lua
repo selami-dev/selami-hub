@@ -2407,7 +2407,6 @@ do
 				if hitboxCFrame and hitboxSize then
 					if isBallInBox(simBallPosition, GameModule.Physics.Radius, hitboxCFrame, hitboxSize) then
 						-- Ball will be in hitbox if we dive at t seconds from now
-						setthreadidentity(2)
 						moveDirectionOverride = diveDir
 
 						local buttonPos = diveButton.AbsolutePosition
