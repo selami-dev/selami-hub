@@ -184,10 +184,281 @@ local function solveCubic(a, b, c, d)
 	end
 end
 
-local zapModule = require(game:GetService("ReplicatedFirst").Controllers.BallController.Network)
-local BallStream = zapModule.BallStream
---[[
+local function zapModule()
+	-- https://lua.expert/
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local RunService = game:GetService("RunService")
+	local v1 = nil
+	local v2 = nil
+	local v3 = nil
+	local v4 = nil
+	local v5 = nil
+	local v6 = nil
+	local v7 = nil
+	local v8 = nil
+	local v9 = nil
 
+	local radian = math.rad(90)
+
+	local _ = {
+		CFrame.Angles(0, 0, 0),
+		CFrame.Angles(radian, 0, 0),
+		CFrame.Angles(0, math.pi, math.pi),
+		CFrame.Angles(-radian, 0, 0),
+		CFrame.Angles(0, math.pi, radian),
+		CFrame.Angles(0, radian, radian),
+		CFrame.Angles(0, 0, radian),
+		CFrame.Angles(0, -radian, radian),
+		CFrame.Angles(-radian, -radian, 0),
+		CFrame.Angles(0, -radian, 0),
+		CFrame.Angles(radian, -radian, 0),
+		CFrame.Angles(0, radian, math.pi),
+		CFrame.Angles(0, -radian, math.pi),
+		CFrame.Angles(0, math.pi, 0),
+		CFrame.Angles(-radian, -math.pi, 0),
+		CFrame.Angles(0, 0, math.pi),
+		CFrame.Angles(radian, math.pi, 0),
+		CFrame.Angles(0, 0, -radian),
+		CFrame.Angles(0, -radian, -radian),
+		CFrame.Angles(0, -math.pi, -radian),
+		CFrame.Angles(0, radian, -radian),
+		CFrame.Angles(radian, radian, 0),
+		CFrame.Angles(0, radian, 0),
+		CFrame.Angles(-radian, radian, 0),
+	}
+
+	local function alloc(p1) --[[ alloc | Line: 49 | Upvalues: v2 (ref), v3 (ref), v1 (ref), v5 (ref) ]]
+		if v3 < v2 + p1 then
+			while v3 < v2 + p1 do
+				v3 = v3 * 2
+			end
+
+			local v12 = buffer.create(v3)
+
+			buffer.copy(v12, 0, v1, 0, v2)
+			v1 = v12
+		end
+
+		v5 = v2
+		v2 = v2 + p1
+
+		return v5
+	end
+
+	local function read(p1) --[[ read | Line: 67 | Upvalues: v7 (ref) ]]
+		local v1 = v7
+
+		v7 = v7 + p1
+
+		return v1
+	end
+
+	local function save() --[[ save | Line: 74 | Upvalues: v1 (ref), v2 (ref), v3 (ref), v4 (ref) ]]
+		return {
+			buff = v1,
+			used = v2,
+			size = v3,
+			inst = v4,
+		}
+	end
+
+	local function load(p1) --[[ load | Line: 83 | Upvalues: v1 (ref), v2 (ref), v3 (ref), v4 (ref) ]]
+		v1 = p1.buff
+		v2 = p1.used
+		v3 = p1.size
+		v4 = p1.inst
+	end
+
+	local function load_empty() --[[ load_empty | Line: 95 | Upvalues: v1 (ref), v2 (ref), v3 (ref), v4 (ref) ]]
+		v1 = buffer.create(64)
+		v2 = 0
+		v3 = 64
+		v4 = {}
+	end
+
+	v1 = buffer.create(64)
+	v2 = 0
+	v3 = 64
+	v4 = {}
+
+	if not RunService:IsRunning() then
+		local function f10() --[[ Line: 106 ]]
+		end
+
+		return table.freeze({
+			SendEvents = f10,
+			BallStream = table.freeze({
+				SetCallback = f10,
+			}),
+		})
+	end
+
+	if not RunService:IsServer() then
+		local v11, v12, v13, v14, v15, v16, v17, v18
+
+		v11 = ReplicatedStorage:WaitForChild("ZAP")
+		v12 = v11:WaitForChild("BALL_ZAP_RELIABLE")
+		v13 = v11:WaitForChild("BALL_ZAP_UNRELIABLE")
+		v14 = v12:IsA("RemoteEvent")
+		assert(v14, "Expected BALL_ZAP_RELIABLE to be a RemoteEvent")
+		v15 = v13:IsA("UnreliableRemoteEvent")
+		assert(v15, "Expected BALL_ZAP_UNRELIABLE to be an UnreliableRemoteEvent")
+		v16 = function() --[[ SendEvents | Line: 124 | Upvalues: v2 (ref), v1 (ref), v12 (copy), v4 (ref), v3 (ref) ]]
+			if v2 == 0 then
+				return
+			end
+
+			local v13 = buffer.create(v2)
+
+			buffer.copy(v13, 0, v1, 0, v2)
+			v12:FireServer(v13, v4)
+			v1 = buffer.create(64)
+			v2 = 0
+			v3 = 64
+			table.clear(v4)
+		end
+		RunService.Heartbeat:Connect(v16)
+		v17 = table.create(1)
+		v18 = table.create(1)
+		v18[1] = {}
+		v12.OnClientEvent:Connect(
+			function(p13, p23) --[[ Line: 143 | Upvalues: v6 (ref), v8 (ref), v7 (ref), v9 (ref), v17 (copy), v18 (copy) ]]
+				v6 = p13
+				v8 = p23
+				v7 = 0
+				v9 = 0
+
+				local v1 = buffer.len(p13)
+
+				while v7 < v1 do
+					local v2 = v7
+
+					v7 = v7 + 1
+
+					if buffer.readu8(p13, v2) == 1 then
+						local t2 = {}
+						local v4 = v7
+
+						v7 = v7 + 4
+
+						local v72 = v7
+
+						v7 = v7 + 4
+
+						local v10 = v7
+
+						v7 = v7 + 4
+
+						local v122 =
+							Vector3.new(buffer.readf32(p13, v4), buffer.readf32(p13, v72), (buffer.readf32(p13, v10)))
+						local v14 = v7
+
+						v7 = v7 + 4
+
+						local v172 = v7
+
+						v7 = v7 + 4
+
+						local v20 = v7
+
+						v7 = v7 + 4
+
+						local v222 =
+							Vector3.new(buffer.readf32(p13, v14), buffer.readf32(p13, v172), (buffer.readf32(p13, v20)))
+						local Magnitude = v222.Magnitude
+
+						if Magnitude == 0 then
+							t2.cframe = CFrame.new(v122)
+						else
+							t2.cframe = CFrame.fromAxisAngle(v222, Magnitude) + v122
+						end
+
+						local v24 = v7
+
+						v7 = v7 + 4
+
+						local v27 = v7
+
+						v7 = v7 + 4
+
+						local v30 = v7
+
+						v7 = v7 + 4
+						t2.velocity =
+							Vector3.new(buffer.readf32(p13, v24), buffer.readf32(p13, v27), (buffer.readf32(p13, v30)))
+
+						local v33 = v7
+
+						v7 = v7 + 8
+						t2.ID = buffer.readf64(p13, v33)
+
+						local v35 = v7
+
+						v7 = v7 + 1
+
+						if buffer.readu8(p13, v35) == 1 then
+							local v37 = v7
+
+							v7 = v7 + 2
+
+							local v38 = buffer.readu16(p13, v37)
+							local v40 = v7
+
+							v7 = v7 + v38
+							t2.Skin = buffer.readstring(p13, v40, v38)
+						else
+							t2.Skin = nil
+						end
+
+						if v17[1] then
+							task.spawn(v17[1], t2)
+
+							continue
+						end
+
+						table.insert(v18[1], t2)
+
+						if #v18[1] > 64 then
+							warn(
+								(
+									("[ZAP] %* events in queue for BallStream. Did you forget to attach a listener?"):format(
+										#v18[1]
+									)
+								)
+							)
+						else
+							continue
+						end
+					else
+						error("Unknown event id")
+					end
+				end
+			end
+		)
+
+		return {
+			SendEvents = v16,
+			BallStream = {
+				SetCallback = function(p13) --[[ SetCallback | Line: 198 | Upvalues: v17 (copy), v18 (copy) ]]
+					v17[1] = p13
+
+					for v1, v2 in v18[1] do
+						task.spawn(p13, v2)
+					end
+
+					v18[1] = {}
+
+					return function() --[[ Line: 211 | Upvalues: v17 (ref) ]]
+						v17[1] = nil
+					end
+				end,
+			},
+		}
+	end
+
+	error("Cannot use the client module on the server!")
+end
+local BallStream = zapModule().BallStream
 
 local BallTrajectory = {}
 do
@@ -387,8 +658,7 @@ do
 	local serverUpdateTime = 1 / 60
 	warn(HaikyuuRaper:Serialize({ debug.getupvalues(BallStream.SetCallback) }, { Prettify = true }))
 
-	--[[
-		BallStream.SetCallback(function(data)
+	BallStream.SetCallback(function(data)
 		--warn(Serializer(data, { Prettify = true }))
 		local BallData = Balls[data.ID]
 		if BallData then
@@ -424,8 +694,6 @@ do
 		return Balls
 	end
 end
-
-]]
 -------
 
 do
@@ -2360,8 +2628,6 @@ do
 end
 
 -->> Debug
---[[
-
 
 do
 	local DebugTab = Window:CollapsingHeader({
@@ -2709,8 +2975,6 @@ do
 		end)
 	end
 end
-
-]]
 
 notif1:Destroy()
 HaikyuuRaper:Finalize()

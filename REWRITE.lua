@@ -59,3 +59,13 @@ local old
 
 			return old(self, unpack(args))
 end)
+
+
+--- HİTBOX
+local lastHitboxName;
+local old; old = hookfunction()
+
+local hitboxMulti = {
+
+}
+
