@@ -2059,9 +2059,6 @@ do
 		end)
 	end
 
-	--[[
-	
-
 	local function isBallInBox(ballPosition, ballRadius, boxCFrame, boxSize)
 		-- Convert ball position to box's local space
 		local localBallPos = boxCFrame:PointToObjectSpace(ballPosition)
@@ -2192,7 +2189,7 @@ do
 				return oldDive(self, ...)
 			end)
 		)
-		
+		]]
 
 		hooks:Add(RunService.Heartbeat:Connect(function()
 			if not LocalPlayer.Team then
@@ -2401,7 +2398,11 @@ do
 						-- Ball will be in hitbox if we dive at t seconds from now
 						setthreadidentity(2)
 						moveDirectionOverride = diveDir
-						gameController:Dive()
+						gameController:DoMove({
+							ActionName = "Dive",
+							Duration = 1.2,
+							IsForce = true,
+						})
 						setthreadidentity(8)
 						moveDirectionOverride = nil
 						found = true
@@ -2414,8 +2415,7 @@ do
 				return
 			end
 
-			--[[
-						-- Adjust distance based on hitbox multiplier
+			-- Adjust distance based on hitbox multiplier
 			local hitboxDistance = distance - (1.5 * (HITBOX_MULTIPLIER_ENABLED and HITBOX_MULTIPLIERS["Dive"] or 1))
 			hitboxDistance = math.max(0, hitboxDistance)
 
@@ -2439,12 +2439,14 @@ do
 
 			moveDirectionOverride = latestDiveDir
 			--setthreadidentity(2)
-			gameController:Dive()
+			gameController:DoMove({
+				ActionName = "Dive",
+				Duration = 1.2,
+				IsForce = true,
+			})
 			setthreadidentity(8)
 			moveDirectionOverride = nil
-			
 		end))
-		
 
 		local AutoReceiveNode = InternalTab:TreeNode({
 			Title = "Auto Receive",
@@ -2583,7 +2585,6 @@ do
 			ENABLED = false
 		end)
 	end
-	]]
 
 	-- Spoof Tilt
 	if hookmetamethod then
