@@ -60,6 +60,7 @@ local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserGameSettings = UserSettings():GetService("UserGameSettings")
 local UserInputService = game:GetService("UserInputService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
 
 local LocalPlayer = Players.LocalPlayer
 if
@@ -1933,6 +1934,7 @@ do
 			newcclosure(function(self, ...)
 				if ENABLED and not checkcaller() and rawequal(self, val) then
 					isBusyState = ({ ... })[1]
+					print(isBusyState)
 					if not gameController.IsServing.get(gameController.IsServing) then
 						return old(self, false)
 					end
@@ -2080,7 +2082,7 @@ do
 		return distance <= ballRadius
 	end
 
-	local hitboxFolder = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Hitboxes")
+	local hitboxFolder = game:GetService("ReplicatedStorage").Assets.HitboxesNew.Default.Assemblies
 	local function getHitboxCFrame(hitboxName, CFrame)
 		local folder = hitboxFolder:WaitForChild(hitboxName)
 		local hitboxPart = folder:WaitForChild("Part")
@@ -2150,6 +2152,8 @@ do
 			lastHitter = ReplicatedStorage:GetAttribute("LastHitter")
 		end))
 
+		local DiveFunc = require(game:GetService("ReplicatedFirst").Controllers.GameController.Actions.Move.Dive)
+
 		local oldIndex
 		oldIndex = hookmetamethod(
 			game,
@@ -2162,9 +2166,9 @@ do
 					and oldIndex(self, "ClassName") == "Humanoid"
 					and rawequal(index, "MoveDirection")
 					and #{ ... } == 0
-					and rawequal(debug.info(3, "n"), "Dive")
+					and rawequal(debug.info(3, "f"), DiveFunc)
 				then
-					--warn("overriding")
+					warn("overriding")
 					if moveDirectionOverride then
 						return moveDirectionOverride
 					elseif PERFECT_DIVE_ENABLED and lastHitter and lastHitter ~= LocalPlayer.Name then
@@ -2190,6 +2194,12 @@ do
 			end)
 		)
 		]]
+		local diveButton = LocalPlayer:WaitForChild("PlayerGui")
+			:WaitForChild("Interface")
+			:WaitForChild("Game")
+			:WaitForChild("InGameActionsBar")
+			:WaitForChild("Actions")
+			:WaitForChild("Dive")
 
 		hooks:Add(RunService.Heartbeat:Connect(function()
 			if not LocalPlayer.Team then
@@ -2213,7 +2223,7 @@ do
 			end
 
 			-- Check if player is already diving
-			if LocalPlayer:GetAttribute("Diving") or isBusyState then
+			if gameController.Values.CurrentMove or isBusyState then
 				return
 			end
 
@@ -2347,12 +2357,13 @@ do
 			end
 
 			-- Calculate dive parameters
-			local diveSpeedMultiplier = LocalPlayer:GetAttribute("GameDiveSpeedMultiplier") or 1
+			local diveSpeedMultiplier = LocalPlayer:GetAttribute("Multiplier_DiveSpeed") or 1
 			local initialVelocity = 36 * diveSpeedMultiplier
 			local acceleration = -initialVelocity / (GameConfig.Ball.Dive.Duration * 0.9)
 
 			-- Calculate horizontal distance to landing point
 			local diffVector = (landingPosition - playerPosition) * Vector3.new(1, 0, 1)
+			local distance = diffVector.Magnitude
 
 			--{{ NEW LOGIC }}
 			-- Simulate possible dive timings up to 1 second ahead, at most 60 steps per second
@@ -2398,11 +2409,16 @@ do
 						-- Ball will be in hitbox if we dive at t seconds from now
 						setthreadidentity(2)
 						moveDirectionOverride = diveDir
-						gameController:DoMove({
-							ActionName = "Dive",
-							Duration = 1.2,
-							IsForce = true,
-						})
+
+						local buttonPos = diveButton.AbsolutePosition
+						local size = diveButton.AbsoluteSize
+
+						local realPos = buttonPos + size * 0.5
+
+						VirtualInputManager:SendMouseButtonEvent(realPos.X, realPos.Y, 0, true, game, 0)
+						task.wait()
+						VirtualInputManager:SendMouseButtonEvent(realPos.X, realPos.Y, 0, false, game, 0)
+
 						setthreadidentity(8)
 						moveDirectionOverride = nil
 						found = true
@@ -2439,12 +2455,15 @@ do
 
 			moveDirectionOverride = latestDiveDir
 			--setthreadidentity(2)
-			gameController:DoMove({
-				ActionName = "Dive",
-				Duration = 1.2,
-				IsForce = true,
-			})
+			local buttonPos = diveButton.AbsolutePosition
+			local size = diveButton.AbsoluteSize
+
+			local realPos = buttonPos + size * 0.5
+			VirtualInputManager:SendMouseButtonEvent(realPos.X, realPos.Y, 0, true, game, 0)
+			task.wait()
+			VirtualInputManager:SendMouseButtonEvent(realPos.X, realPos.Y, 0, false, game, 0)
 			setthreadidentity(8)
+
 			moveDirectionOverride = nil
 		end))
 
@@ -2878,7 +2897,7 @@ do
 				return
 			end
 
-			local multiplier = player:GetAttribute("GameDiveSpeedMultiplier") or 1
+			local multiplier = player:GetAttribute("Multiplier_DiveSpeed") or 1
 			local radius = 10 * multiplier
 
 			local cylinder = Instance.new("Part")

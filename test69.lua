@@ -19,3 +19,12 @@ do
 		return old(self, ...)
 	end)
 end
+
+local button = game:GetService("Players").LocalPlayer.PlayerGui.Interface.Game.InGameActionsBar.Actions.Dive
+
+local buttonPos = button.AbsolutePosition
+
+local VirtualInputManager = game:GetService("VirtualInputManager")
+VirtualInputManager:SendMouseButtonEvent(buttonPos.X, buttonPos.Y, 0, true, game, 0)
+task.wait()
+VirtualInputManager:SendMouseButtonEvent(buttonPos.X, buttonPos.Y, 0, false, game, 0)
