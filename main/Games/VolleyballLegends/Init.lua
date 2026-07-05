@@ -1410,7 +1410,7 @@ end
 local HITBOX_MULTIPLIERS = {}
 local HITBOX_MULTIPLIER_ENABLED = false
 
-local DoMove = require(game:GetService("ReplicatedFirst").Controllers.GameController.Actions.Move.DoMove)
+--local DoMove = require(game:GetService("ReplicatedFirst").Controllers.GameController.Actions.Move.DoMove)
 
 do
 	local InternalTab = Window:CollapsingHeader({
