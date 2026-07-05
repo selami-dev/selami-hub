@@ -2409,7 +2409,11 @@ do
 						-- Ball will be in hitbox if we dive at t seconds from now
 						moveDirectionOverride = diveDir
 
-						firesignal(diveButton.Activated)
+						gameController:DoMove({
+							ActionName = "Dive",
+							Duration = 1.2,
+						})
+
 						RunService.RenderStepped:Wait()
 						--[[
 												local buttonPos = diveButton.AbsolutePosition
@@ -2458,7 +2462,10 @@ do
 
 			moveDirectionOverride = latestDiveDir
 			--setthreadidentity(2)
-			firesignal(diveButton.Activated)
+			gameController:DoMove({
+				ActionName = "Dive",
+				Duration = 1.2,
+			})
 			RunService.RenderStepped:Wait()
 			setthreadidentity(8)
 
