@@ -2194,7 +2194,7 @@ do
 			end)
 		)
 		]]
-		local diveButton = LocalPlayer:WaitForChild("PlayerGui")
+		local diveButton: ImageButton = LocalPlayer:WaitForChild("PlayerGui")
 			:WaitForChild("Interface")
 			:WaitForChild("Game")
 			:WaitForChild("InGameActionsBar")
@@ -2409,7 +2409,10 @@ do
 						-- Ball will be in hitbox if we dive at t seconds from now
 						moveDirectionOverride = diveDir
 
-						local buttonPos = diveButton.AbsolutePosition
+						firesignal(diveButton.Activated)
+						RunService.RenderStepped:Wait()
+						--[[
+												local buttonPos = diveButton.AbsolutePosition
 						local size = diveButton.AbsoluteSize
 
 						local realPos = buttonPos + size * 0.5
@@ -2417,6 +2420,7 @@ do
 						VirtualInputManager:SendMouseButtonEvent(realPos.X, realPos.Y, 0, true, game, 0)
 						task.wait()
 						VirtualInputManager:SendMouseButtonEvent(realPos.X, realPos.Y, 0, false, game, 0)
+						]]
 
 						setthreadidentity(8)
 						moveDirectionOverride = nil
@@ -2454,13 +2458,8 @@ do
 
 			moveDirectionOverride = latestDiveDir
 			--setthreadidentity(2)
-			local buttonPos = diveButton.AbsolutePosition
-			local size = diveButton.AbsoluteSize
-
-			local realPos = buttonPos + size * 0.5
-			VirtualInputManager:SendMouseButtonEvent(realPos.X, realPos.Y, 0, true, game, 0)
-			task.wait()
-			VirtualInputManager:SendMouseButtonEvent(realPos.X, realPos.Y, 0, false, game, 0)
+			firesignal(diveButton.Activated)
+			RunService.RenderStepped:Wait()
 			setthreadidentity(8)
 
 			moveDirectionOverride = nil
