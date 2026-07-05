@@ -24,7 +24,7 @@ local Serializer = loadstring(
 	game:HttpGet("https://raw.githubusercontent.com/regginator/LuaEncode/refs/heads/master/src/LuaEncode.lua")
 )()
 
-local DoMove = require(game:GetService("ReplicatedFirst").Controllers.GameController.Actions.Move.DoMove)
+local DoMove = require(game:GetService("ReplicatedFirst").Controllers.GameController.Actions.Move.Dive)
 
 local old
 old = hookfunction(DoMove, function(...)
